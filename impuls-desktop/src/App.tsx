@@ -46,19 +46,44 @@ export const App: React.FC = () => {
       setActiveChatId(firstId);
       setMessages(storage.getMessages(firstId));
 
-      // Fetch live messages from server
+      // Fetch live messages from server with deduplication
       api.fetchMessages(firstId).then(remote => {
         if (remote && remote.length > 0) {
-          setMessages(remote);
-          storage.saveMessages(firstId, remote);
+          const local = storage.getMessages(firstId);
+          const map = new Map<string, Message>();
+          local.forEach(m => map.set(m.id, m));
+          remote.forEach(m => {
+            const existing = Array.from(map.values()).find(
+              e => e.id === m.id || (e.senderId === m.senderId && e.text === m.text && Math.abs(e.timestamp - m.timestamp) < 5000)
+            );
+            if (existing) {
+              map.set(existing.id, { ...existing, ...m });
+            } else {
+              map.set(m.id, m);
+            }
+          });
+          const combined = Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
+          setMessages(combined);
+          storage.saveMessages(firstId, combined);
         }
       });
     }
 
-    // Subscribe to live SSE events from server
+    // Subscribe to live SSE events from server with deduplication
     const unsubscribe = api.subscribeToStream((incomingMsg) => {
       setMessages(prev => {
-        if (prev.some(m => m.id === incomingMsg.id)) return prev;
+        const isDup = prev.some(
+          m => m.id === incomingMsg.id ||
+          (m.senderId === incomingMsg.senderId && m.text === incomingMsg.text && Math.abs(m.timestamp - incomingMsg.timestamp) < 5000)
+        );
+        if (isDup) {
+          return prev.map(m =>
+            (m.id === incomingMsg.id || (m.senderId === incomingMsg.senderId && m.text === incomingMsg.text && Math.abs(m.timestamp - incomingMsg.timestamp) < 5000))
+              ? { ...m, isRead: incomingMsg.isRead }
+              : m
+          );
+        }
+        storage.addMessage(incomingMsg.chatId, incomingMsg);
         return [...prev, incomingMsg];
       });
     });
@@ -92,11 +117,25 @@ export const App: React.FC = () => {
     // Clear unread count on selection
     setChats(prev => prev.map(c => c.id === chatId ? { ...c, unreadCount: 0 } : c));
 
-    // Sync with remote server
+    // Sync with remote server with deduplication
     const remote = await api.fetchMessages(chatId);
     if (remote && remote.length > 0) {
-      setMessages(remote);
-      storage.saveMessages(chatId, remote);
+      const local = storage.getMessages(chatId);
+      const map = new Map<string, Message>();
+      local.forEach(m => map.set(m.id, m));
+      remote.forEach(m => {
+        const existing = Array.from(map.values()).find(
+          e => e.id === m.id || (e.senderId === m.senderId && e.text === m.text && Math.abs(e.timestamp - m.timestamp) < 5000)
+        );
+        if (existing) {
+          map.set(existing.id, { ...existing, ...m });
+        } else {
+          map.set(m.id, m);
+        }
+      });
+      const combined = Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
+      setMessages(combined);
+      storage.saveMessages(chatId, combined);
     }
   };
 
@@ -111,7 +150,7 @@ export const App: React.FC = () => {
       text,
       timestamp: Date.now(),
       isOutgoing: true,
-      isRead: true,
+      isRead: false,
       reactions: {},
     };
 
@@ -120,8 +159,9 @@ export const App: React.FC = () => {
     setMessages(updated);
     setChats(storage.getChats());
 
-    // Push to server MongoDB database
+    // Push to server MongoDB database with client ID
     api.sendMessage({
+      id: newMessage.id,
       chatId: activeChatId,
       senderId: currentUser.id,
       senderName: currentUser.displayName,
@@ -131,6 +171,11 @@ export const App: React.FC = () => {
     // If talking to Impuls System, simulate automatic operational reply
     if (activeChatId === 'chat_system') {
       setTimeout(() => {
+        // Mark user's outgoing message as read upon bot ack
+        const currentMsgs = storage.getMessages('chat_system');
+        const readMsgs = currentMsgs.map(m => m.id === newMessage.id ? { ...m, isRead: true } : m);
+        storage.saveMessages('chat_system', readMsgs);
+
         const replyMsg: Message = {
           id: `msg_sys_${Date.now()}`,
           chatId: 'chat_system',

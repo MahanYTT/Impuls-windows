@@ -18,6 +18,7 @@ import {
   Video,
   ArrowDown,
   ArrowLeft,
+  ArrowUp,
   X,
   UserPlus
 } from 'lucide-react';
@@ -377,14 +378,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <div className="telegram-bubble-body">
                     <span className="telegram-bubble-text">{msg.text}</span>
 
-                    {/* Timestamp & Telegram Checkmarks */}
+                    {/* Timestamp & Delivery / Read Checkmarks */}
                     <span className="telegram-bubble-meta">
                       <span className="telegram-bubble-time">
                         {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {isMine && (
-                        <span className="telegram-check-animate telegram-bubble-ticks">
-                          <CheckCheck size={13} color="var(--msg-check)" />
+                        <span className="telegram-check-animate telegram-bubble-ticks" title={msg.isRead ? "Read" : "Delivered"}>
+                          {msg.isRead ? (
+                            <CheckCheck size={13} color="#ffffff" />
+                          ) : (
+                            <Check size={13} color="rgba(255, 255, 255, 0.65)" />
+                          )}
                         </span>
                       )}
                     </span>
@@ -495,10 +500,11 @@ export const ChatView: React.FC<ChatViewProps> = ({
           display: 'flex',
           alignItems: 'flex-end',
           gap: '8px',
-          backgroundColor: 'var(--bg-input)',
-          border: '1px solid var(--border-medium)',
-          borderRadius: '14px',
-          padding: '6px 12px',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '24px',
+          padding: '5px 12px',
+          backdropFilter: 'blur(20px)',
         }}>
           {/* Emoji Toggle */}
           <button
@@ -512,7 +518,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: showEmojiPicker ? 'var(--accent-telegram)' : 'var(--text-muted)',
+              color: showEmojiPicker ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
               marginBottom: '2px',
             }}
           >
@@ -541,7 +547,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           {/* Auto-expanding Input Area */}
           <textarea
             ref={textareaRef}
-            placeholder={`Message ${chat.title}...`}
+            placeholder={`iMessage...`}
             value={inputText}
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
@@ -549,7 +555,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             style={{
               flex: 1,
               backgroundColor: 'transparent',
-              fontSize: '13.5px',
+              fontSize: '14px',
               resize: 'none',
               maxHeight: '120px',
               padding: '6px 4px',
@@ -563,21 +569,21 @@ export const ChatView: React.FC<ChatViewProps> = ({
             <button
               type="submit"
               className="telegram-press telegram-check-animate"
-              title="Send message (Enter)"
+              title="Send message"
               style={{
-                width: '34px',
-                height: '34px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--accent-telegram)',
+                backgroundColor: 'var(--accent-apple-blue)',
                 color: '#fff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '2px',
-                boxShadow: '0 2px 8px rgba(46, 166, 255, 0.4)',
+                boxShadow: '0 2px 8px rgba(0, 122, 255, 0.45)',
               }}
             >
-              <Send size={15} style={{ marginLeft: '1px' }} />
+              <ArrowUp size={16} strokeWidth={2.6} />
             </button>
           ) : (
             <button

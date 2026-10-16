@@ -170,11 +170,13 @@ export const ChatList: React.FC<ChatListProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '11px 16px',
+                  padding: '10px 12px',
+                  margin: '2px 8px',
+                  borderRadius: '10px',
                   cursor: 'pointer',
-                  backgroundColor: isActive ? 'var(--bg-card-hover)' : 'transparent',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  transition: 'background-color 0.1s ease',
+                  backgroundColor: isActive ? 'rgba(0, 122, 255, 0.18)' : 'transparent',
+                  boxShadow: isActive ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.3)' : 'none',
+                  transition: 'all 0.12s ease',
                 }}
               >
                 {/* Chat Avatar */}

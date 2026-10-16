@@ -39,9 +39,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'dm' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'dm' ? 'var(--accent-telegram)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'dm' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
+            backgroundColor: currentTab === 'dm' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
+            color: currentTab === 'dm' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'dm' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
           }}
         >
           <MessageSquare size={20} />
@@ -58,9 +58,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'groups' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'groups' ? 'var(--accent-telegram)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'groups' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
+            backgroundColor: currentTab === 'groups' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
+            color: currentTab === 'groups' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'groups' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
           }}
         >
           <Users size={20} />
@@ -77,9 +77,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'friends' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'friends' ? 'var(--accent-discord-green)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'friends' ? 'inset 0 0 0 1px rgba(35, 165, 90, 0.3)' : 'none',
+            backgroundColor: currentTab === 'friends' ? 'rgba(48, 209, 88, 0.16)' : 'transparent',
+            color: currentTab === 'friends' ? 'var(--status-online)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'friends' ? 'inset 0 0 0 1px rgba(48, 209, 88, 0.35)' : 'none',
           }}
         >
           <UserPlus size={20} />
@@ -96,9 +96,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'channels' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'channels' ? 'var(--accent-telegram)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'channels' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
+            backgroundColor: currentTab === 'channels' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
+            color: currentTab === 'channels' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'channels' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
           }}
         >
           <Hash size={20} />

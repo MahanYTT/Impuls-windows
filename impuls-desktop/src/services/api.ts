@@ -57,6 +57,7 @@ export const api = {
   },
 
   sendMessage: async (msg: {
+    id?: string;
     chatId: string;
     senderId: string;
     senderName: string;

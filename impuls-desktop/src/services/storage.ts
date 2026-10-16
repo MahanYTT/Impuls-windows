@@ -213,7 +213,21 @@ export const storage = {
 
   addMessage: (chatId: string, message: Message): Message[] => {
     const existing = storage.getMessages(chatId);
-    const updated = [...existing, message];
+    
+    // Deduplicate: If message already exists by ID or content timestamp within 4s, update it
+    const existingIndex = existing.findIndex(m => 
+      m.id === message.id || 
+      (m.senderId === message.senderId && m.text === message.text && Math.abs(m.timestamp - message.timestamp) < 4000)
+    );
+
+    let updated: Message[];
+    if (existingIndex !== -1) {
+      updated = [...existing];
+      updated[existingIndex] = { ...updated[existingIndex], ...message };
+    } else {
+      updated = [...existing, message];
+    }
+
     storage.saveMessages(chatId, updated);
 
     // Update chat last message

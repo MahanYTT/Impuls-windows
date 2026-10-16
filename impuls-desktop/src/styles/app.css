@@ -53,7 +53,7 @@ input, textarea {
   color: var(--text-primary);
 }
 
-/* App Outer Shell with Telegram Border */
+/* App Outer Shell with Apple macOS Window Styling */
 .telegram-window-frame {
   display: flex;
   flex-direction: column;
@@ -61,10 +61,13 @@ input, textarea {
   width: 100vw;
   background-color: var(--bg-app);
   border: 1px solid var(--border-window);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.85);
-  transition: border-radius 0.12s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: border-radius 0.15s ease;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .telegram-window-frame.maximized {
@@ -72,78 +75,106 @@ input, textarea {
   border: none;
 }
 
-/* Custom Telegram Desktop Titlebar */
-.telegram-titlebar {
-  height: 34px;
-  background-color: var(--bg-titlebar);
+/* Apple macOS Titlebar */
+.apple-titlebar {
+  height: 38px;
+  background: var(--bg-titlebar);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 12px;
+  padding: 0 16px;
   -webkit-app-region: drag;
   user-select: none;
   z-index: 1000;
   flex-shrink: 0;
 }
 
-.telegram-titlebar-drag {
+.apple-traffic-lights {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  -webkit-app-region: no-drag;
 }
 
-.telegram-titlebar-title {
-  font-size: 12.5px;
+.apple-traffic-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, filter 0.15s ease;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
+}
+
+.apple-traffic-btn.close {
+  background-color: #ff5f56;
+}
+
+.apple-traffic-btn.minimize {
+  background-color: #ffbd2e;
+}
+
+.apple-traffic-btn.maximize {
+  background-color: #27c93f;
+}
+
+.apple-traffic-icon {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  line-height: 1;
+}
+
+.apple-traffic-lights:hover .apple-traffic-icon {
+  opacity: 1;
+}
+
+.apple-traffic-btn:active {
+  filter: brightness(0.8);
+  transform: scale(0.95);
+}
+
+.apple-titlebar-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apple-titlebar-title {
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: 0.3px;
+  color: #f5f5f7;
+  letter-spacing: -0.015em;
 }
 
-.telegram-titlebar-badge {
+.apple-titlebar-badge {
   font-size: 10.5px;
+  font-weight: 500;
   color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 2px 7px;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 12px;
   border: 1px solid var(--border-subtle);
-}
-
-.telegram-titlebar-controls {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  -webkit-app-region: no-drag;
-}
-
-.telegram-titlebar-btn {
-  width: 44px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  transition: background-color 0.1s ease, color 0.1s ease;
-}
-
-.telegram-titlebar-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-}
-
-.telegram-titlebar-btn.close:hover {
-  background-color: #e81123;
-  color: #ffffff;
 }
 
 /* App Main Container */
 .app-container {
   display: flex;
   flex: 1;
-  height: calc(100vh - 34px);
+  height: calc(100vh - 38px);
   width: 100%;
   background-color: var(--bg-app);
   overflow: hidden;
@@ -173,7 +204,7 @@ input, textarea {
   position: relative;
 }
 
-/* Zone 3: Main Chat Pane */
+/* Zone 3: Main Chat Pane (Pure Apple velvet dark, NO dot grids) */
 .main-chat-pane {
   flex: 1;
   background-color: var(--bg-chat);
@@ -181,11 +212,9 @@ input, textarea {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 24px 24px;
 }
 
-/* Telegram Message Bubble Styling */
+/* Apple iMessage Bubble Styling */
 .telegram-bubble-wrap {
   position: relative;
   max-width: 68%;
@@ -199,26 +228,29 @@ input, textarea {
   max-width: 100%;
   width: fit-content;
   box-sizing: border-box;
-  padding: 8px 12px 6px 12px;
-  font-size: 13.5px;
-  line-height: 1.45;
+  padding: 9px 14px 7px 14px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  letter-spacing: -0.012em;
+  line-height: 1.4;
   word-break: break-word;
-  box-shadow: var(--shadow-sm);
   transition: transform 0.1s ease;
 }
 
 .telegram-bubble.incoming {
   background-color: var(--msg-incoming);
   border: 1px solid var(--msg-incoming-border);
-  border-radius: 14px 14px 14px 3px;
-  color: var(--text-primary);
+  border-radius: 18px 18px 18px 4px;
+  color: var(--msg-incoming-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .telegram-bubble.outgoing {
-  background-color: var(--msg-outgoing);
+  background: var(--msg-outgoing);
   border: 1px solid var(--msg-outgoing-border);
-  border-radius: 14px 14px 3px 14px;
-  color: var(--text-primary);
+  border-radius: 18px 18px 4px 18px;
+  color: var(--msg-outgoing-text);
+  box-shadow: 0 1px 3px rgba(0, 122, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .telegram-bubble-body {
@@ -235,7 +267,15 @@ input, textarea {
   min-width: 20px;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--text-primary);
+}
+
+.telegram-bubble.incoming .telegram-bubble-text {
+  color: var(--msg-incoming-text);
+}
+
+.telegram-bubble.outgoing .telegram-bubble-text {
+  color: var(--msg-outgoing-text);
+  font-weight: 450;
 }
 
 .telegram-bubble-meta {
@@ -247,9 +287,16 @@ input, textarea {
   flex-shrink: 0;
   font-size: 10.5px;
   line-height: 1;
-  color: var(--msg-time);
   user-select: none;
   margin-bottom: 2px;
+}
+
+.telegram-bubble.incoming .telegram-bubble-meta {
+  color: var(--msg-incoming-time);
+}
+
+.telegram-bubble.outgoing .telegram-bubble-meta {
+  color: var(--msg-outgoing-time);
 }
 
 .telegram-bubble-time {

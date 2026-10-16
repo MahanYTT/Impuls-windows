@@ -38,58 +38,57 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   };
 
   return (
-    <header className="telegram-titlebar">
-      {/* Drag & Brand Info */}
-      <div className="telegram-titlebar-drag">
-        <ImpulsLogo size={18} />
-        <span className="telegram-titlebar-title">Impuls Desktop</span>
-        <div className="telegram-titlebar-badge" title="Connected to Private Telegram MTProto Server">
+    <header className="apple-titlebar">
+      {/* Apple Traffic Lights (macOS Controls) */}
+      <div className="apple-traffic-lights">
+        <button
+          onClick={handleClose}
+          className="apple-traffic-btn close"
+          title="Close"
+          aria-label="Close"
+        >
+          <span className="apple-traffic-icon">✕</span>
+        </button>
+
+        <button
+          onClick={handleMinimize}
+          className="apple-traffic-btn minimize"
+          title="Minimize"
+          aria-label="Minimize"
+        >
+          <span className="apple-traffic-icon">−</span>
+        </button>
+
+        <button
+          onClick={handleMaximize}
+          className="apple-traffic-btn maximize"
+          title={isMaximized ? "Restore" : "Zoom"}
+          aria-label={isMaximized ? "Restore" : "Zoom"}
+        >
+          <span className="apple-traffic-icon">+</span>
+        </button>
+      </div>
+
+      {/* Centered Brand & Server Info */}
+      <div className="apple-titlebar-center">
+        <ImpulsLogo size={16} />
+        <span className="apple-titlebar-title">Impuls</span>
+        <div className="apple-titlebar-badge" title="Encrypted MTProto Server">
           <span
             style={{
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: isOnline ? 'var(--status-online)' : 'var(--status-offline)',
-              boxShadow: isOnline ? '0 0 8px rgba(35, 165, 90, 0.8)' : 'none',
+              backgroundColor: isOnline ? '#30d158' : '#8e8e93',
+              boxShadow: isOnline ? '0 0 6px rgba(48, 209, 88, 0.7)' : 'none',
             }}
           />
           <span>{serverHost}</span>
         </div>
       </div>
 
-      {/* Telegram-style Window Controls */}
-      <div className="telegram-titlebar-controls">
-        <button
-          onClick={handleMinimize}
-          className="telegram-titlebar-btn"
-          title="Minimize"
-          aria-label="Minimize"
-        >
-          <Minus size={13} strokeWidth={2} />
-        </button>
-
-        <button
-          onClick={handleMaximize}
-          className="telegram-titlebar-btn"
-          title={isMaximized ? 'Restore' : 'Maximize'}
-          aria-label={isMaximized ? 'Restore' : 'Maximize'}
-        >
-          {isMaximized ? (
-            <Copy size={11} strokeWidth={2} style={{ transform: 'rotate(90deg)' }} />
-          ) : (
-            <Square size={11} strokeWidth={2} />
-          )}
-        </button>
-
-        <button
-          onClick={handleClose}
-          className="telegram-titlebar-btn close"
-          title="Close"
-          aria-label="Close"
-        >
-          <X size={14} strokeWidth={2} />
-        </button>
-      </div>
+      {/* Symmetrical Right Spacer */}
+      <div style={{ width: '64px' }} />
     </header>
   );
 };
