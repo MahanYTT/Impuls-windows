@@ -175,7 +175,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                   borderRadius: '10px',
                   cursor: 'pointer',
                   backgroundColor: isActive ? 'rgba(0, 122, 255, 0.18)' : 'transparent',
-                  boxShadow: isActive ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.3)' : 'none',
+                  border: isActive ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
                   transition: 'all 0.12s ease',
                 }}
               >
@@ -193,7 +193,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                   fontSize: chat.avatar ? '20px' : '15px',
                   flexShrink: 0,
                   position: 'relative',
-                  boxShadow: 'var(--shadow-sm)',
+                  border: '1px solid var(--border-subtle)',
                 }}>
                   {chat.avatar ? (
                     chat.avatar

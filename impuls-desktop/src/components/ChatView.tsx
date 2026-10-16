@@ -167,7 +167,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
         padding: '0 20px',
         backgroundColor: 'var(--bg-app)',
         zIndex: 10,
-        boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
       }}>
         {/* Chat Avatar & Details with Mobile Back Button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
@@ -580,7 +579,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '2px',
-                boxShadow: '0 2px 8px rgba(0, 122, 255, 0.45)',
               }}
             >
               <ArrowUp size={16} strokeWidth={2.6} />

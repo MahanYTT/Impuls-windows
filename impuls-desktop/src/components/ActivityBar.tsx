@@ -41,7 +41,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             justifyContent: 'center',
             backgroundColor: currentTab === 'dm' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
             color: currentTab === 'dm' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'dm' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
+            border: currentTab === 'dm' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
           }}
         >
           <MessageSquare size={20} />
@@ -60,7 +60,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             justifyContent: 'center',
             backgroundColor: currentTab === 'groups' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
             color: currentTab === 'groups' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'groups' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
+            border: currentTab === 'groups' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
           }}
         >
           <Users size={20} />
@@ -79,7 +79,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             justifyContent: 'center',
             backgroundColor: currentTab === 'friends' ? 'rgba(48, 209, 88, 0.16)' : 'transparent',
             color: currentTab === 'friends' ? 'var(--status-online)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'friends' ? 'inset 0 0 0 1px rgba(48, 209, 88, 0.35)' : 'none',
+            border: currentTab === 'friends' ? '1px solid rgba(48, 209, 88, 0.35)' : '1px solid transparent',
           }}
         >
           <UserPlus size={20} />
@@ -98,7 +98,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             justifyContent: 'center',
             backgroundColor: currentTab === 'channels' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
             color: currentTab === 'channels' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            boxShadow: currentTab === 'channels' ? 'inset 0 0 0 1px rgba(0, 122, 255, 0.35)' : 'none',
+            border: currentTab === 'channels' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
           }}
         >
           <Hash size={20} />

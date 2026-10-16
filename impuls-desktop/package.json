@@ -1,6 +1,6 @@
 {
   "name": "impuls-desktop",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Impuls Private Messenger - Standalone Desktop Client",
   "main": "dist-electron/main.js",
   "scripts": {

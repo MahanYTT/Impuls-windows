@@ -80,7 +80,6 @@ export const TitleBar: React.FC<TitleBarProps> = ({
               height: '6px',
               borderRadius: '50%',
               backgroundColor: isOnline ? '#30d158' : '#8e8e93',
-              boxShadow: isOnline ? '0 0 6px rgba(48, 209, 88, 0.7)' : 'none',
             }}
           />
           <span>{serverHost}</span>
