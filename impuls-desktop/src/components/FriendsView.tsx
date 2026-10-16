@@ -99,14 +99,15 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-chat)' }}>
       {/* Discord-style Top Header */}
       <div style={{
-        height: '56px',
+        minHeight: '56px',
         borderBottom: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
-        padding: '0 20px',
-        gap: '16px',
+        padding: '8px 20px',
+        gap: '14px',
         backgroundColor: 'var(--bg-app)',
         zIndex: 5,
+        flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
           <Users size={20} color="var(--text-muted)" />
@@ -116,7 +117,7 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
         <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-subtle)' }} />
 
         {/* Tab Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={() => { setActiveSubTab('online'); setAddFriendStatus(null); }}
             className="telegram-press"
@@ -508,7 +509,7 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
         </div>
 
         {/* Right Discord-style "Active Now" Column */}
-        <div style={{
+        <div className="discord-active-now-col" style={{
           width: '280px',
           borderLeft: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-sidebar)',
@@ -516,6 +517,7 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '16px',
+          flexShrink: 0,
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.3px' }}>
             Active Now

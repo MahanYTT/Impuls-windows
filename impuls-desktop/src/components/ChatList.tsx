@@ -27,7 +27,7 @@ export const ChatList: React.FC<ChatListProps> = ({
   const filteredChats = chats.filter(chat => {
     if (currentTab === 'groups' && chat.type !== 'group') return false;
     if (currentTab === 'channels' && chat.type !== 'channel') return false;
-    if (currentTab === 'dm' && chat.type === 'channel') return false;
+    if (currentTab === 'dm' && (chat.type === 'channel' || chat.type === 'group')) return false;
     if (!search.trim()) return true;
     return (
       chat.title.toLowerCase().includes(search.toLowerCase()) ||

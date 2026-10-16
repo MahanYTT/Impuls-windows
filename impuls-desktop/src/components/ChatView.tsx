@@ -17,6 +17,7 @@ import {
   Phone,
   Video,
   ArrowDown,
+  ArrowLeft,
   X,
   UserPlus
 } from 'lucide-react';
@@ -27,6 +28,7 @@ interface ChatViewProps {
   currentUser: User;
   onSendMessage: (text: string) => void;
   onOpenGroupInfo?: (chat: Chat) => void;
+  onBack?: () => void;
 }
 
 const QUICK_REACTIONS = ['👍', '❤️', '🔥', '😂', '👏', '🚀'];
@@ -43,12 +45,21 @@ export const ChatView: React.FC<ChatViewProps> = ({
   currentUser,
   onSendMessage,
   onOpenGroupInfo,
+  onBack,
 }) => {
   const [inputText, setInputText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showGroupDrawer, setShowGroupDrawer] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(prev => prev === msg ? null : prev);
+    }, 3200);
+  };
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -137,6 +148,14 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   return (
     <div className="main-chat-pane">
+      {/* Sleek In-App Toast Notification */}
+      {toastMessage && (
+        <div className="telegram-toast-banner">
+          <ShieldCheck size={16} color="var(--accent-telegram)" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Telegram-style Top Header */}
       <div style={{
         height: '60px',
@@ -149,91 +168,115 @@ export const ChatView: React.FC<ChatViewProps> = ({
         zIndex: 10,
         boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
       }}>
-        {/* Chat Avatar & Details */}
-        <div
-          onClick={() => isGroup && setShowGroupDrawer(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            cursor: isGroup ? 'pointer' : 'default',
-          }}
-        >
-          {/* Avatar with Status Ring */}
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: isGroup ? '12px' : '50%',
-            backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : 'var(--accent-base)'),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: chat.avatar ? '20px' : '15px',
-            position: 'relative',
-            flexShrink: 0,
-            boxShadow: 'var(--shadow-sm)',
-          }}>
-            {chat.avatar ? (
-              chat.avatar
-            ) : chat.type === 'system' ? (
-              <ShieldCheck size={22} color="#a0b4cc" />
-            ) : chat.type === 'channel' ? (
-              <Radio size={20} color="#8fa8c8" />
-            ) : isGroup ? (
-              <Users size={20} color="#fff" />
-            ) : (
-              chat.title.charAt(0).toUpperCase()
-            )}
+        {/* Chat Avatar & Details with Mobile Back Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="mobile-back-btn telegram-press"
+              title="Back to conversations"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-primary)',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <ArrowLeft size={18} />
+            </button>
+          )}
 
-            {chat.isOnline && !isGroup && (
-              <span style={{
-                position: 'absolute',
-                bottom: '0',
-                right: '0',
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--status-online)',
-                border: '2px solid var(--bg-app)',
-              }} />
-            )}
-          </div>
+          <div
+            onClick={() => isGroup && setShowGroupDrawer(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              cursor: isGroup ? 'pointer' : 'default',
+              minWidth: 0,
+            }}
+          >
+            {/* Avatar with Status Ring */}
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: isGroup ? '12px' : '50%',
+              backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : 'var(--accent-base)'),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: chat.avatar ? '20px' : '15px',
+              position: 'relative',
+              flexShrink: 0,
+              boxShadow: 'var(--shadow-sm)',
+            }}>
+              {chat.avatar ? (
+                chat.avatar
+              ) : chat.type === 'system' ? (
+                <ShieldCheck size={22} color="#a0b4cc" />
+              ) : chat.type === 'channel' ? (
+                <Radio size={20} color="#8fa8c8" />
+              ) : isGroup ? (
+                <Users size={20} color="#fff" />
+              ) : (
+                chat.title.charAt(0).toUpperCase()
+              )}
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {chat.title}
-              </h2>
-              {chat.username && (
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  @{chat.username}
-                </span>
+              {chat.isOnline && !isGroup && (
+                <span style={{
+                  position: 'absolute',
+                  bottom: '0',
+                  right: '0',
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--status-online)',
+                  border: '2px solid var(--bg-app)',
+                }} />
               )}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', marginTop: '2px' }}>
-              {isGroup ? (
-                <span style={{ color: 'var(--accent-telegram)' }}>
-                  {memberCount} members • WhatsApp Group Sync
-                </span>
-              ) : chat.type === 'system' ? (
-                <span style={{ color: 'var(--status-online)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-online)' }} />
-                  Encrypted MTProto 2.0 • Server 80.201.130.248
-                </span>
-              ) : (
-                <span style={{ color: 'var(--status-online)' }}>
-                  online
-                </span>
-              )}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {chat.title}
+                </h2>
+                {chat.username && (
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    @{chat.username}
+                  </span>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', marginTop: '2px' }}>
+                {isGroup ? (
+                  <span style={{ color: 'var(--accent-telegram)' }}>
+                    {memberCount} members • WhatsApp Group Sync
+                  </span>
+                ) : chat.type === 'system' ? (
+                  <span style={{ color: 'var(--status-online)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-online)' }} />
+                    Encrypted MTProto 2.0 • Server 80.201.130.248
+                  </span>
+                ) : (
+                  <span style={{ color: 'var(--status-online)' }}>
+                    online
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Top Header Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           <button
             title="Search conversation"
             className="telegram-press"
@@ -246,7 +289,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             title="Encrypted Voice Call"
             className="telegram-press"
             style={{ width: '34px', height: '34px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
-            onClick={() => alert('Encrypted MTProto Voice Tunnel initialized on 80.201.130.248')}
+            onClick={() => showToast('Encrypted MTProto Voice Tunnel initialized on 80.201.130.248')}
           >
             <Phone size={17} />
           </button>
@@ -265,14 +308,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '20px 32px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-        }}
+        className="telegram-messages-canvas"
       >
         {/* Telegram Date Separator Pill */}
         <div className="telegram-date-separator">
@@ -311,7 +347,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               )}
 
               {/* Message Bubble Container with Floating Reaction Bar */}
-              <div style={{ position: 'relative', maxWidth: '68%' }}>
+              <div className="telegram-bubble-wrap">
                 {/* Floating Quick Reaction Bar on Hover */}
                 {isHovered && (
                   <div
@@ -337,39 +373,27 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 {/* Message Bubble */}
                 <div
                   className={`telegram-bubble ${isMine ? 'outgoing' : 'incoming'}`}
-                  style={{
-                    padding: '9px 13px',
-                    position: 'relative',
-                  }}
                 >
-                  <div style={{ whiteSpace: 'pre-wrap', fontSize: '13.5px' }}>{msg.text}</div>
+                  <div className="telegram-bubble-body">
+                    <span className="telegram-bubble-text">{msg.text}</span>
 
-                  {/* Timestamp & Telegram Checkmarks */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    gap: '4px',
-                    marginTop: '4px',
-                    fontSize: '10.5px',
-                    color: 'var(--msg-time)',
-                    float: 'right',
-                    marginLeft: '12px',
-                  }}>
-                    <span>
-                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    {isMine && (
-                      <span className="telegram-check-animate" style={{ display: 'flex', alignItems: 'center' }}>
-                        <CheckCheck size={13} color="var(--msg-check)" />
+                    {/* Timestamp & Telegram Checkmarks */}
+                    <span className="telegram-bubble-meta">
+                      <span className="telegram-bubble-time">
+                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
-                    )}
+                      {isMine && (
+                        <span className="telegram-check-animate telegram-bubble-ticks">
+                          <CheckCheck size={13} color="var(--msg-check)" />
+                        </span>
+                      )}
+                    </span>
                   </div>
                 </div>
 
                 {/* Attached Reactions Pills */}
                 {msg.reactions && Object.keys(msg.reactions).length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '3px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '3px', gap: '4px' }}>
                     {Object.entries(msg.reactions).map(([emoji, count]) => (
                       <span
                         key={emoji}
@@ -464,9 +488,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       )}
 
       {/* Telegram-style Composer Input Dock */}
-      <div style={{
-        padding: '12px 24px 16px',
-        backgroundColor: 'var(--bg-app)',
+      <div className="telegram-input-container" style={{
         borderTop: '1px solid var(--border-subtle)',
       }}>
         <form onSubmit={handleSend} style={{
@@ -511,7 +533,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               color: 'var(--text-muted)',
               marginBottom: '2px',
             }}
-            onClick={() => alert('Impuls File Vault: Drag & drop encrypted media supported.')}
+            onClick={() => showToast('Impuls File Vault: Drag & drop encrypted media supported.')}
           >
             <Paperclip size={19} />
           </button>
@@ -572,7 +594,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 color: 'var(--text-muted)',
                 marginBottom: '2px',
               }}
-              onClick={() => alert('Encrypted Voice Note recording ready.')}
+              onClick={() => showToast('Encrypted Voice Note recording ready.')}
             >
               <Mic size={18} />
             </button>
@@ -587,7 +609,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
           top: 0,
           right: 0,
           bottom: 0,
-          width: '320px',
+          width: 'min(320px, 100vw)',
+          maxWidth: '100%',
           backgroundColor: 'var(--bg-sidebar)',
           borderLeft: '1px solid var(--border-subtle)',
           boxShadow: 'var(--shadow-lg)',

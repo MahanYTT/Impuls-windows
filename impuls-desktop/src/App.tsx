@@ -230,7 +230,7 @@ export const App: React.FC = () => {
       <TitleBar serverHost="80.201.130.248" isOnline={true} />
 
       {/* Main App Container */}
-      <div className="app-container">
+      <div className={`app-container ${activeChatId ? 'has-active-chat' : ''}`}>
         {/* Zone 1: Far-Left Activity Rail */}
         <ActivityBar
           currentTab={currentTab}
@@ -270,6 +270,7 @@ export const App: React.FC = () => {
               messages={messages}
               currentUser={currentUser}
               onSendMessage={handleSendMessage}
+              onBack={() => setActiveChatId(null)}
             />
           </>
         )}
