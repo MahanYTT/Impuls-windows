@@ -5,6 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [v1.0.1] - 2026-10-16
+
+### 🚀 Added
+- **Official Compiled Windows Executable & Portable Package**:
+  - Attached official standalone executable `Impuls.exe` directly to GitHub Releases.
+  - Attached full zero-dependency portable package `Impuls-v1.0.1-Windows-x64.zip` bundled with runtime modules and DirectX/ANGLE acceleration.
+- **Embedded Native Branding & PE Metadata**:
+  - High-resolution kinetic pulse icon injected directly into PE resources (`RT_GROUP_ICON` & `RT_ICON`).
+  - PE Version Info updated with Product Name `Impuls Desktop`, Company `Impuls Team`, and File Description.
+- **Automated Binary Pipeline**:
+  - Integrated `tools/patch_impuls_binary.js` and `tools/ChangeIcon.cs` into CI/CD release workflow (`.github/workflows/build-windows.yml`).
+  - Direct end-to-end MTProto 2.0 handshake verified with self-hosted Impuls server at `80.201.130.248:20443`.
+  - RSA keypair synchronized with `loyldg/mytelegram` backend for seamless authentication.
+
+### ⚙️ Version Metadata
+- Version: `1.0.1`
+- Internal Version Code: `1000001`
+- Target Platform: Windows 10 / 11 (x64) Portable
+
+---
+
 ## [v1.0.0] - 2026-10-16
 
 ### 🚀 Added
@@ -16,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Preconfigured native DC discovery endpoints in `mtproto_dc_options.cpp` pointing directly to Impuls Server (`80.201.130.248:20443`).
   - Automatic fallback to high-speed media CDN on port `20543`.
 - **CI/CD Cloud Build Pipeline**:
-  - GitHub Actions workflow (`.github/workflows/build-windows.yml`) configured to package standalone portable archives and installer binaries on every tagged release.
+  - GitHub Actions workflow configured to package releases on every tagged release.
 
 ### ⚙️ Version Metadata
 - Version: `1.0.0`

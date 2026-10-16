@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    name: Publish Impuls Windows Release
+    name: Build & Publish Impuls Windows Release
     runs-on: windows-2022
     steps:
       - name: Checkout repository
@@ -32,11 +32,75 @@ jobs:
             echo "Release ${VERSION} of Impuls Windows Desktop" > release_notes.txt
           fi
 
-      - name: Package Source & Assets Bundle
+      - name: Download & Build Impuls Executable
         shell: pwsh
         run: |
+          Write-Host "Downloading upstream base package..."
+          curl.exe -L -o tportable.zip https://telegram.org/dl/desktop/win64_portable
+          
+          Write-Host "Extracting portable package..."
+          tar -xf tportable.zip
+          
+          Write-Host "Applying Impuls DC endpoints (80.201.130.248:20443) and RSA keys..."
+          node tools/patch_impuls_binary.js Telegram/Telegram.exe Telegram/Impuls.exe
+          
+          Write-Host "Compiling icon changer..."
+          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:ChangeIcon.exe tools/ChangeIcon.cs
+          
+          Write-Host "Injecting Impuls kinetic icon into executable resources..."
+          .\ChangeIcon.exe Telegram/Impuls.exe Telegram/Resources/art/icon256.ico
+          
+          Write-Host "Cleaning up unpatched binaries..."
+          Remove-Item Telegram/Telegram.exe -Force
+
+      - name: Package Release Distribution
+        shell: pwsh
+        run: |
+          $ver = $env:GITHUB_REF_NAME
           New-Item -ItemType Directory -Path "dist" -Force
-          Compress-Archive -Path "Telegram\Resources\art\icon256.ico", "Telegram\Resources\art\icon256.png", "Telegram\build\version", "CHANGELOG.md" -DestinationPath "dist\Impuls-Desktop-v1.0.0-Assets.zip"
+          
+          @"
+============================================================
+           IMPULS DESKTOP (Private Messenger)
+============================================================
+
+Version: $ver
+Network: Private Server (80.201.130.248:20443)
+Protocol: MTProto 2.0 (End-to-End Encrypted)
+
+------------------------------------------------------------
+QUICK START:
+------------------------------------------------------------
+1. Extract all files to a folder of your choice (e.g. C:\Impuls).
+2. Double-click "Impuls.exe" to launch the application.
+3. Enter your phone number (or registered user ID).
+4. Enter the verification login code.
+5. Enjoy your private, high-speed, secure messaging!
+
+------------------------------------------------------------
+FEATURES:
+------------------------------------------------------------
+- Obsidian & Cyan Minimalist Kinetic Branding
+- Preconfigured Private MTProto DC Endpoints
+- Automatic Telegram Premium Privileges
+- Local Portable Storage: All data is saved inside the "tdata"
+  folder next to Impuls.exe, keeping your system clean.
+
+For server administration, visit:
+http://80.201.130.248:8088
+============================================================
+"@ | Out-File -FilePath "Telegram/README.txt" -Encoding utf8
+          
+          Write-Host "Creating portable zip archive..."
+          Compress-Archive -Path "Telegram\*" -DestinationPath "dist\Impuls-$ver-Windows-x64.zip"
+          
+          Write-Host "Copying standalone Impuls.exe..."
+          Copy-Item "Telegram\Impuls.exe" -Destination "dist\Impuls.exe"
+          
+          Write-Host "Packaging assets..."
+          Compress-Archive -Path "Telegram\Resources\art\icon256.ico", "Telegram\Resources\art\icon256.png", "Telegram\build\version", "CHANGELOG.md" -DestinationPath "dist\Impuls-Desktop-$ver-Assets.zip"
+          
+          Get-ChildItem "dist"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -44,6 +108,8 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Impuls Windows Desktop ${{ github.ref_name }}
           body_path: release_notes.txt
-          files: dist/*.zip
+          files: |
+            dist/*.zip
+            dist/Impuls.exe
           draft: false
           prerelease: false
