@@ -1,0 +1,44 @@
+:root {
+  /* Matte Obsidian Backgrounds (NO NEON) */
+  --bg-app: #090a0d;
+  --bg-activity: #0e1116;
+  --bg-sidebar: #13171e;
+  --bg-chat: #090a0d;
+  --bg-card: #181d26;
+  --bg-card-hover: #1f2532;
+  --bg-input: #11141a;
+
+  /* Hairline Neutral Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-focus: #3d4659;
+
+  /* Typography */
+  --text-primary: #f0f2f6;
+  --text-secondary: #9aa1b2;
+  --text-muted: #5e6678;
+
+  /* Matte Technical Accents (Muted Slate / Steel, strictly NO NEON) */
+  --accent-base: #3b506b;
+  --accent-hover: #486282;
+  --accent-active: #57759a;
+  --accent-badge: #263242;
+  --accent-badge-text: #9bb7db;
+
+  /* Message Cards */
+  --msg-incoming: #141820;
+  --msg-outgoing: #222b3a;
+  --msg-outgoing-border: rgba(255, 255, 255, 0.08);
+
+  /* System Status Indicators */
+  --status-online: #4e8263;
+  --status-offline: #5e6678;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
+
+  /* Typography Stacks */
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}

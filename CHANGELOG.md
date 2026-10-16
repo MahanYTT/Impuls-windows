@@ -3,6 +3,19 @@
 All notable changes to the Impuls Windows Desktop application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.4] - 2026-10-16
+
+### 🚀 Added & Rebuilt
+- **Custom Impuls Desktop Client**:
+  - Completely custom matte obsidian & dark slate interface (strictly **NO NEON**).
+  - Native **Impuls ID / Username + Security PIN** authentication (zero carrier phone screens, zero country flags, zero QR codes).
+  - Modern **3-Zone Workspace Layout**:
+    - Zone 1: Far-left activity rail with quick navigation for Direct Messages, Channels, Media Vault, and Profile Settings.
+    - Zone 2: Searchable conversation list with unread markers and instant chat/channel creation.
+    - Zone 3: Expansive, distraction-free chat pane with flat message cards, timestamps, and read receipts.
+  - Built-in automated **Impuls System** greeting and connection status telemetry (`80.201.130.248:20443`).
+  - Self-hosted clean build using official verified runtime packages.
+
 ---
 
 ## [v1.0.3] - 2026-10-16
