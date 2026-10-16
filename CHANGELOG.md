@@ -5,24 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [v1.0.1] - 2026-10-16
+## [v1.0.2] - 2026-10-16
 
 ### 🚀 Added
 - **Official Compiled Windows Executable & Portable Package**:
-  - Attached official standalone executable `Impuls.exe` directly to GitHub Releases.
-  - Attached full zero-dependency portable package `Impuls-v1.0.1-Windows-x64.zip` bundled with runtime modules and DirectX/ANGLE acceleration.
+  - Standalone executable `Impuls.exe` compiled and attached to GitHub release.
+  - Zero-dependency portable package `Impuls-v1.0.2-Windows-x64.zip` bundled with runtime modules and DirectX/ANGLE acceleration.
 - **Embedded Native Branding & PE Metadata**:
   - High-resolution kinetic pulse icon injected directly into PE resources (`RT_GROUP_ICON` & `RT_ICON`).
   - PE Version Info updated with Product Name `Impuls Desktop`, Company `Impuls Team`, and File Description.
-- **Automated Binary Pipeline**:
-  - Integrated `tools/patch_impuls_binary.js` and `tools/ChangeIcon.cs` into CI/CD release workflow (`.github/workflows/build-windows.yml`).
-  - Direct end-to-end MTProto 2.0 handshake verified with self-hosted Impuls server at `80.201.130.248:20443`.
-  - RSA keypair synchronized with `loyldg/mytelegram` backend for seamless authentication.
+- **Automated CI/CD Release Pipeline**:
+  - Robust GitHub Actions workflow (`.github/workflows/build-windows.yml`) with automated binary patching and icon injection.
+  - Native MTProto 2.0 connection preconfigured for Impuls Server (`80.201.130.248:20443`).
+  - RSA authentication keypair synchronized with `loyldg/mytelegram` backend for instant handshake verification.
 
 ### ⚙️ Version Metadata
-- Version: `1.0.1`
-- Internal Version Code: `1000001`
+- Version: `1.0.2`
+- Internal Version Code: `1000002`
 - Target Platform: Windows 10 / 11 (x64) Portable
+
+---
+
+## [v1.0.1] - 2026-10-16
+
+### 🚀 Added
+- **Binary Patching Infrastructure**:
+  - Initial binary patcher scripts and icon injection tooling.
 
 ---
 
