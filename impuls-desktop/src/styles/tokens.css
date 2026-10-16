@@ -1,44 +1,65 @@
 :root {
-  /* Matte Obsidian Backgrounds (NO NEON) */
-  --bg-app: #090a0d;
-  --bg-activity: #0e1116;
-  --bg-sidebar: #13171e;
-  --bg-chat: #090a0d;
-  --bg-card: #181d26;
-  --bg-card-hover: #1f2532;
-  --bg-input: #11141a;
+  /* Onyx Black Backgrounds (Ultra-sleek, deep luxury matte, strictly NO NEON) */
+  --bg-app: #050508;
+  --bg-titlebar: #07080c;
+  --bg-activity: #080a0f;
+  --bg-sidebar: #0b0d13;
+  --bg-chat: #06070a;
+  --bg-card: #0f1219;
+  --bg-card-hover: #151923;
+  --bg-input: #0b0d14;
+  --bg-popover: #12151f;
 
-  /* Hairline Neutral Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-focus: #3d4659;
+  /* Telegram & Hairline Neutral Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-medium: rgba(255, 255, 255, 0.09);
+  --border-focus: rgba(46, 166, 255, 0.4);
+  --border-window: rgba(255, 255, 255, 0.08);
 
   /* Typography */
   --text-primary: #f0f2f6;
   --text-secondary: #9aa1b2;
   --text-muted: #5e6678;
 
-  /* Matte Technical Accents (Muted Slate / Steel, strictly NO NEON) */
-  --accent-base: #3b506b;
-  --accent-hover: #486282;
-  --accent-active: #57759a;
-  --accent-badge: #263242;
-  --accent-badge-text: #9bb7db;
+  /* Telegram & Discord Accents */
+  --accent-telegram: #2ea6ff;
+  --accent-telegram-hover: #48b4ff;
+  --accent-telegram-active: #1c94eb;
+  --accent-telegram-bg: rgba(46, 166, 255, 0.12);
+  --accent-base: #2a4768;
+  --accent-hover: #375982;
+  --accent-active: #4872a3;
+  --accent-badge: #192738;
+  --accent-badge-text: #82b6e8;
+  --accent-discord-green: #23a55a;
+  --accent-discord-green-hover: #2db867;
 
-  /* Message Cards */
-  --msg-incoming: #141820;
-  --msg-outgoing: #222b3a;
+  /* Telegram Message Bubbles */
+  --msg-incoming: #131720;
+  --msg-incoming-border: rgba(255, 255, 255, 0.05);
+  --msg-outgoing: #1f2d3e;
   --msg-outgoing-border: rgba(255, 255, 255, 0.08);
+  --msg-time: #778ca2;
+  --msg-check: #5288c1;
 
   /* System Status Indicators */
-  --status-online: #4e8263;
+  --status-online: #23a55a;
+  --status-idle: #f0b232;
+  --status-dnd: #f23f43;
   --status-offline: #5e6678;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.65);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.85);
+
+  /* Telegram Timing & Easing Curves */
+  --ease-telegram: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   /* Typography Stacks */
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
+

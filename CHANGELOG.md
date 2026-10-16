@@ -3,6 +3,36 @@
 All notable changes to the Impuls Windows Desktop application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.6] - 2026-10-16
+
+### 🚀 Added & Enhanced
+- **Custom Telegram Window Border & TitleBar**:
+  - Implemented frameless custom window architecture with a 1px sleek Telegram border.
+  - Custom TitleBar with drag region, server indicator (`80.201.130.248`), and animated minimize, maximize/restore, and red-hover close buttons.
+- **Telegram Signature Animations**:
+  - Smooth spring bubble pop-in (`telegram-bubble-pop`).
+  - Telegram checkmark animations on read receipts.
+  - Active scale ripple on all interactive elements (`telegram-press`).
+  - Subtle Telegram wallpaper pattern canvas.
+- **WhatsApp-Style Easy Group Creation**:
+  - Instant multi-select member modal with live search, chip tags, and participant counter.
+  - Group emoji & color theme customization.
+  - Integrated WhatsApp-style Group Info drawer with member lists and admin roles.
+- **Discord-Style Friend Adding & Member Discovery**:
+  - Discord-style Friends Hub with subtabs: **Online**, **All**, **Network Directory**, and **Add Friend**.
+  - Direct addition via Impuls ID / username.
+  - "Active Now" sidebar column displaying online network peers with one-click direct messaging.
+- **Authentic Telegram Chat Experience ("Get the Old Chat")**:
+  - Tail-notched message bubbles with distinct shapes.
+  - Centered floating date separator pills.
+  - Inline timestamps and double checkmarks.
+  - Floating hover quick-reactions bar (👍, ❤️, 🔥, 😂, 👏, 🚀) with animated count pills.
+  - Telegram input dock with popup emoji picker, paperclip media attachment, and voice note / send toggle.
+- **Deep Onyx Black Palette**:
+  - Transitioned interface to ultra-luxurious `#050508` matte onyx black.
+
+---
+
 ## [v1.0.5] - 2026-10-16
 
 ### 🚀 Added & Enhanced

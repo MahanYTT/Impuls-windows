@@ -1,7 +1,8 @@
 import React from 'react';
 import { ImpulsLogo } from '../assets/Logo';
 import { TabType, User } from '../types';
-import { MessageSquare, Hash, FolderArchive, Settings, LogOut, ShieldCheck } from 'lucide-react';
+import { MessageSquare, Hash, FolderArchive, Settings, LogOut, ShieldCheck, Users, UserPlus } from 'lucide-react';
+
 
 interface ActivityBarProps {
   currentTab: TabType;
@@ -30,34 +31,74 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
         <button
           title="Direct Messages"
           onClick={() => onTabChange('dm')}
+          className="telegram-press"
           style={{
             width: '44px',
             height: '44px',
-            borderRadius: '10px',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: currentTab === 'dm' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'dm' ? 'var(--text-primary)' : 'var(--text-muted)',
-            transition: 'all 0.15s ease',
+            color: currentTab === 'dm' ? 'var(--accent-telegram)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'dm' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
           }}
         >
           <MessageSquare size={20} />
         </button>
 
         <button
-          title="Channels & Groups"
-          onClick={() => onTabChange('channels')}
+          title="WhatsApp-Style Groups"
+          onClick={() => onTabChange('groups')}
+          className="telegram-press"
           style={{
             width: '44px',
             height: '44px',
-            borderRadius: '10px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: currentTab === 'groups' ? 'var(--bg-card-hover)' : 'transparent',
+            color: currentTab === 'groups' ? 'var(--accent-telegram)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'groups' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
+          }}
+        >
+          <Users size={20} />
+        </button>
+
+        <button
+          title="Discord-Style Friends & Network Discovery"
+          onClick={() => onTabChange('friends')}
+          className="telegram-press"
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: currentTab === 'friends' ? 'var(--bg-card-hover)' : 'transparent',
+            color: currentTab === 'friends' ? 'var(--accent-discord-green)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'friends' ? 'inset 0 0 0 1px rgba(35, 165, 90, 0.3)' : 'none',
+          }}
+        >
+          <UserPlus size={20} />
+        </button>
+
+        <button
+          title="Public & Encrypted Channels"
+          onClick={() => onTabChange('channels')}
+          className="telegram-press"
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: currentTab === 'channels' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'channels' ? 'var(--text-primary)' : 'var(--text-muted)',
-            transition: 'all 0.15s ease',
+            color: currentTab === 'channels' ? 'var(--accent-telegram)' : 'var(--text-muted)',
+            boxShadow: currentTab === 'channels' ? 'inset 0 0 0 1px rgba(46, 166, 255, 0.25)' : 'none',
           }}
         >
           <Hash size={20} />
@@ -66,16 +107,16 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
         <button
           title="Files & Media Vault"
           onClick={() => onTabChange('vault')}
+          className="telegram-press"
           style={{
             width: '44px',
             height: '44px',
-            borderRadius: '10px',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: currentTab === 'vault' ? 'var(--bg-card-hover)' : 'transparent',
             color: currentTab === 'vault' ? 'var(--text-primary)' : 'var(--text-muted)',
-            transition: 'all 0.15s ease',
           }}
         >
           <FolderArchive size={20} />

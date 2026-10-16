@@ -78,6 +78,80 @@ export const api = {
     return null;
   },
 
+  fetchUsers: async (): Promise<User[]> => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/client/users`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.users && data.users.length > 0) {
+          return data.users;
+        }
+      }
+    } catch (err) {
+      console.warn('[Impuls API] Failed to fetch remote users, using network catalog:', err);
+    }
+
+    // Default network discover directory
+    return [
+      {
+        id: 'u_mahan',
+        username: 'mahan',
+        displayName: 'Mahan YTT',
+        avatarColor: '#2ea6ff',
+        isOnline: true,
+        isPremium: true,
+        bio: 'Impuls Founder & Lead Architect',
+        customStatus: '⚡ Building private networks',
+      },
+      {
+        id: 'u_alex',
+        username: 'alex',
+        displayName: 'Alex Rivers',
+        avatarColor: '#7bc862',
+        isOnline: true,
+        isPremium: true,
+        bio: 'Core Infrastructure Specialist',
+        customStatus: '🛡️ MTProto 2.0 active',
+      },
+      {
+        id: 'u_schmitz',
+        username: 'schmitz',
+        displayName: 'Manuel Schmitz',
+        avatarColor: '#e17076',
+        isOnline: false,
+        isPremium: true,
+        bio: 'Desktop Client Engineer',
+        customStatus: '🌙 Offline (Last seen 2h ago)',
+      },
+      {
+        id: 'u_sarah',
+        username: 'sarah_k',
+        displayName: 'Sarah Koenig',
+        avatarColor: '#a695e7',
+        isOnline: true,
+        isPremium: false,
+        bio: 'Design Systems & Motion',
+        customStatus: '🎨 Telegram dark mode theme',
+      },
+      {
+        id: 'u_david',
+        username: 'david_ops',
+        displayName: 'David Vance',
+        avatarColor: '#faa357',
+        isOnline: true,
+        isPremium: true,
+        bio: 'Server Operations Node 80.201.130.248',
+        customStatus: '🚀 All services 99.99% uptime',
+      }
+    ];
+  },
+
+  searchUser: async (query: string): Promise<User | null> => {
+    const clean = query.trim().toLowerCase().replace(/^@/, '');
+    const all = await api.fetchUsers();
+    return all.find(u => u.username.toLowerCase() === clean || u.id === clean || u.displayName.toLowerCase().includes(clean)) || null;
+  },
+
   subscribeToStream: (onMessage: (msg: Message) => void): (() => void) => {
     try {
       const source = new EventSource(`${SERVER_URL}/api/client/stream`);
@@ -98,3 +172,4 @@ export const api = {
     }
   }
 };
+

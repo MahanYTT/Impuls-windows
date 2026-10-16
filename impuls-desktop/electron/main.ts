@@ -18,9 +18,9 @@ function createWindow() {
     height: 820,
     minWidth: 840,
     minHeight: 600,
-    backgroundColor: '#090a0d',
-    frame: true,
-    titleBarStyle: 'default',
+    backgroundColor: '#050508',
+    frame: false,
+    titleBarStyle: 'hidden',
     title: 'Impuls',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -31,6 +31,14 @@ function createWindow() {
   });
 
   mainWindow.setMenuBarVisibility(false);
+
+  mainWindow.on('maximize', () => {
+    mainWindow?.webContents.send('window-maximized-change', true);
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow?.webContents.send('window-maximized-change', false);
+  });
 
   const indexPath = path.join(__dirname, '../dist/index.html');
   log(`Resolved indexPath: ${indexPath}`);
@@ -87,8 +95,13 @@ ipcMain.on('window-close', () => {
   mainWindow?.close();
 });
 
+ipcMain.handle('window-is-maximized', () => {
+  return mainWindow?.isMaximized() ?? false;
+});
+
 ipcMain.on('notify', (_, { title, body }) => {
   if (Notification.isSupported()) {
     new Notification({ title, body }).show();
   }
 });
+

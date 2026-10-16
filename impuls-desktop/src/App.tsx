@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { User, Chat, Message, TabType } from './types';
 import { storage } from './services/storage';
+import { api } from './services/api';
 import { AuthCard } from './components/AuthCard';
 import { ActivityBar } from './components/ActivityBar';
 import { ChatList } from './components/ChatList';
 import { ChatView } from './components/ChatView';
 import { SettingsModal } from './components/SettingsModal';
-
-import { api } from './services/api';
+import { TitleBar } from './components/TitleBar';
+import { FriendsView } from './components/FriendsView';
+import { NewGroupModal } from './components/NewGroupModal';
 
 export const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -16,6 +18,21 @@ export const App: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [showSettings, setShowSettings] = useState(false);
+  const [showNewGroupModal, setShowNewGroupModal] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  useEffect(() => {
+    // Listen for window maximization changes
+    if (window.electronAPI) {
+      window.electronAPI.isMaximized().then(setIsMaximized);
+      const unsubscribe = window.electronAPI.onMaximizedChange((max) => {
+        setIsMaximized(max);
+      });
+      return () => {
+        if (unsubscribe) unsubscribe();
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const user = storage.getUser();
@@ -95,6 +112,7 @@ export const App: React.FC = () => {
       timestamp: Date.now(),
       isOutgoing: true,
       isRead: true,
+      reactions: {},
     };
 
     // Update local state immediately
@@ -122,6 +140,7 @@ export const App: React.FC = () => {
           timestamp: Date.now(),
           isOutgoing: false,
           isRead: true,
+          reactions: { '⚡': 1 },
         };
         const withReply = storage.addMessage('chat_system', replyMsg);
         setMessages(withReply);
@@ -149,59 +168,130 @@ export const App: React.FC = () => {
     handleSelectChat(newChat.id);
   };
 
+  const handleGroupCreated = (group: Chat) => {
+    const updatedChats = [group, ...chats];
+    storage.saveChats(updatedChats);
+    setChats(updatedChats);
+    setCurrentTab('groups');
+    handleSelectChat(group.id);
+  };
+
+  const handleStartDirectMessage = (targetUser: User) => {
+    const existing = chats.find(c =>
+      c.type === 'dm' &&
+      (c.username?.toLowerCase() === targetUser.username.toLowerCase() || c.id === `chat_dm_${targetUser.id}`)
+    );
+
+    if (existing) {
+      setCurrentTab('dm');
+      handleSelectChat(existing.id);
+    } else {
+      const newDm: Chat = {
+        id: `chat_dm_${targetUser.id}`,
+        title: targetUser.displayName,
+        type: 'dm',
+        username: targetUser.username,
+        avatarColor: targetUser.avatarColor,
+        lastMessage: 'Direct encrypted channel opened',
+        lastMessageTime: Date.now(),
+        unreadCount: 0,
+        isOnline: targetUser.isOnline,
+      };
+
+      const updated = [newDm, ...chats];
+      storage.saveChats(updated);
+      setChats(updated);
+      setCurrentTab('dm');
+      handleSelectChat(newDm.id);
+    }
+  };
+
   const handleUpdateUser = (updated: User) => {
     storage.setUser(updated);
     setCurrentUser(updated);
   };
 
   if (!currentUser) {
-    return <AuthCard onSuccess={handleAuthSuccess} />;
+    return (
+      <div className={`telegram-window-frame ${isMaximized ? 'maximized' : ''}`}>
+        <TitleBar serverHost="80.201.130.248" isOnline={true} />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AuthCard onSuccess={handleAuthSuccess} />
+        </div>
+      </div>
+    );
   }
 
   const activeChat = chats.find(c => c.id === activeChatId) || null;
 
   return (
-    <div className="app-container">
-      {/* Zone 1: Far-Left Activity Rail */}
-      <ActivityBar
-        currentTab={currentTab}
-        onTabChange={(tab) => {
-          if (tab === 'settings') {
-            setShowSettings(true);
-          } else {
-            setCurrentTab(tab);
-          }
-        }}
-        user={currentUser}
-        onOpenSettings={() => setShowSettings(true)}
-        onLogout={handleLogout}
-      />
+    <div className={`telegram-window-frame ${isMaximized ? 'maximized' : ''}`}>
+      {/* Telegram-style Top TitleBar */}
+      <TitleBar serverHost="80.201.130.248" isOnline={true} />
 
-      {/* Zone 2: Middle Conversations List */}
-      <ChatList
-        chats={chats}
-        activeChatId={activeChatId}
-        onSelectChat={handleSelectChat}
-        onNewChat={handleNewChat}
-        currentTab={currentTab}
-      />
-
-      {/* Zone 3: Main Chat Pane */}
-      <ChatView
-        chat={activeChat}
-        messages={messages}
-        currentUser={currentUser}
-        onSendMessage={handleSendMessage}
-      />
-
-      {/* Settings & Profile Modal */}
-      {showSettings && (
-        <SettingsModal
+      {/* Main App Container */}
+      <div className="app-container">
+        {/* Zone 1: Far-Left Activity Rail */}
+        <ActivityBar
+          currentTab={currentTab}
+          onTabChange={(tab) => {
+            if (tab === 'settings') {
+              setShowSettings(true);
+            } else {
+              setCurrentTab(tab);
+            }
+          }}
           user={currentUser}
-          onClose={() => setShowSettings(false)}
-          onUpdateUser={handleUpdateUser}
+          onOpenSettings={() => setShowSettings(true)}
+          onLogout={handleLogout}
         />
-      )}
+
+        {/* Discord-style Friends View */}
+        {currentTab === 'friends' ? (
+          <FriendsView
+            currentUser={currentUser}
+            onStartDirectMessage={handleStartDirectMessage}
+          />
+        ) : (
+          <>
+            {/* Zone 2: Middle Conversations & Groups List */}
+            <ChatList
+              chats={chats}
+              activeChatId={activeChatId}
+              onSelectChat={handleSelectChat}
+              onNewChat={handleNewChat}
+              onOpenNewGroup={() => setShowNewGroupModal(true)}
+              currentTab={currentTab}
+            />
+
+            {/* Zone 3: Main Telegram-style Chat Pane */}
+            <ChatView
+              chat={activeChat}
+              messages={messages}
+              currentUser={currentUser}
+              onSendMessage={handleSendMessage}
+            />
+          </>
+        )}
+
+        {/* WhatsApp-Style New Group Modal */}
+        {showNewGroupModal && (
+          <NewGroupModal
+            currentUser={currentUser}
+            onClose={() => setShowNewGroupModal(false)}
+            onGroupCreated={handleGroupCreated}
+          />
+        )}
+
+        {/* Settings & Profile Modal */}
+        {showSettings && (
+          <SettingsModal
+            user={currentUser}
+            onClose={() => setShowSettings(false)}
+            onUpdateUser={handleUpdateUser}
+          />
+        )}
+      </div>
     </div>
   );
 };
