@@ -5,24 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [v1.0.3] - 2026-10-16
+
+### 🚀 Added
+- **Dedicated Windows Build Runner Optimization**:
+  - Pruned extraneous upstream workflows (Docker, Snap, macOS, Linux) to prioritize Windows release runner dispatch.
+  - Streamlined `build-windows.yml` workflow with standalone `tools/README.txt` deployment.
+- **Official Executable & Portable Release Assets**:
+  - `Impuls.exe` standalone executable for Windows 10/11 x64.
+  - `Impuls-v1.0.3-Windows-x64.zip` zero-dependency portable package.
+  - Embedded kinetic cyan/obsidian icon and native Windows PE metadata.
+  - Preconfigured MTProto 2.0 connection pointing to Impuls server (`80.201.130.248:20443`).
+
+### ⚙️ Version Metadata
+- Version: `1.0.3`
+- Internal Version Code: `1000003`
+- Target Platform: Windows 10 / 11 (x64) Portable
+
+---
+
 ## [v1.0.2] - 2026-10-16
 
 ### 🚀 Added
-- **Official Compiled Windows Executable & Portable Package**:
-  - Standalone executable `Impuls.exe` compiled and attached to GitHub release.
-  - Zero-dependency portable package `Impuls-v1.0.2-Windows-x64.zip` bundled with runtime modules and DirectX/ANGLE acceleration.
-- **Embedded Native Branding & PE Metadata**:
-  - High-resolution kinetic pulse icon injected directly into PE resources (`RT_GROUP_ICON` & `RT_ICON`).
-  - PE Version Info updated with Product Name `Impuls Desktop`, Company `Impuls Team`, and File Description.
 - **Automated CI/CD Release Pipeline**:
-  - Robust GitHub Actions workflow (`.github/workflows/build-windows.yml`) with automated binary patching and icon injection.
-  - Native MTProto 2.0 connection preconfigured for Impuls Server (`80.201.130.248:20443`).
-  - RSA authentication keypair synchronized with `loyldg/mytelegram` backend for instant handshake verification.
-
-### ⚙️ Version Metadata
-- Version: `1.0.2`
-- Internal Version Code: `1000002`
-- Target Platform: Windows 10 / 11 (x64) Portable
+  - GitHub Actions workflow (`.github/workflows/build-windows.yml`) with automated binary patching and icon injection.
 
 ---
 
