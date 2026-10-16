@@ -20,8 +20,8 @@ body {
 
 /* Custom Minimalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -29,12 +29,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 button {
@@ -53,7 +53,7 @@ input, textarea {
   color: var(--text-primary);
 }
 
-/* App Outer Shell with Apple macOS Window Styling */
+/* App Outer Shell with Clean Desktop Window Styling */
 .telegram-window-frame {
   display: flex;
   flex-direction: column;
@@ -61,13 +61,11 @@ input, textarea {
   width: 100vw;
   background-color: var(--bg-app);
   border: 1px solid var(--border-window);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: none;
   transition: border-radius 0.15s ease;
   font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .telegram-window-frame.maximized {
@@ -75,12 +73,10 @@ input, textarea {
   border: none;
 }
 
-/* Apple macOS Titlebar */
+/* Titlebar */
 .apple-titlebar {
   height: 38px;
   background: var(--bg-titlebar);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
@@ -153,20 +149,20 @@ input, textarea {
 .apple-titlebar-title {
   font-size: 13px;
   font-weight: 600;
-  color: #f5f5f7;
+  color: var(--text-primary);
   letter-spacing: -0.015em;
 }
 
 .apple-titlebar-badge {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.05);
+  gap: 6px;
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
 }
 
@@ -180,148 +176,177 @@ input, textarea {
   overflow: hidden;
 }
 
-/* Zone 1: Activity Bar */
+/* Zone 1: WhatsApp Thin Left Navigation Rail */
 .activity-bar {
-  width: 64px;
+  width: 58px;
   background-color: var(--bg-activity);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 14px 0;
+  justify-content: space-between;
+  padding: 12px 0;
   z-index: 10;
   flex-shrink: 0;
+  box-sizing: border-box;
+  height: 100%;
 }
 
-/* Zone 2: Sidebar Panel */
+/* Zone 2: WhatsApp Sidebar Panel */
 .sidebar-panel {
-  width: 320px;
+  width: 360px;
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   position: relative;
+  height: 100%;
 }
 
-/* Zone 3: Main Chat Pane (Pure Apple velvet dark, NO dot grids) */
+/* Zone 3: Main Chat Pane with Authentic WhatsApp Wallpaper */
 .main-chat-pane {
   flex: 1;
   background-color: var(--bg-chat);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  height: 100%;
 }
 
-/* Apple iMessage Bubble Styling */
-.telegram-bubble-wrap {
+/* WhatsApp Message Row Layout */
+.wa-message-row {
+  display: flex;
+  width: 100%;
+  padding: 1px 0;
+}
+
+.wa-message-row.outgoing {
+  justify-content: flex-end;
+}
+
+.wa-message-row.incoming {
+  justify-content: flex-start;
+}
+
+/* WhatsApp Compact Proportional Bubble */
+.wa-bubble-wrap {
   position: relative;
-  max-width: 68%;
+  max-width: 65%;
   display: flex;
   flex-direction: column;
 }
 
-.telegram-bubble {
+.wa-bubble {
   position: relative;
-  min-width: 90px;
-  max-width: 100%;
-  width: fit-content;
-  box-sizing: border-box;
-  padding: 9px 14px 7px 14px;
+  border-radius: 8px;
+  padding: 6px 9px 8px 9px;
   font-family: var(--font-sans);
-  font-size: 14px;
-  letter-spacing: -0.012em;
-  line-height: 1.4;
+  font-size: 14.2px;
+  line-height: 19px;
   word-break: break-word;
-  transition: transform 0.1s ease;
+  box-sizing: border-box;
+  display: inline-block;
+  max-width: 100%;
+  color: var(--text-primary);
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  transition: background-color 0.15s ease;
 }
 
-.telegram-bubble.incoming {
+.wa-bubble.incoming {
   background-color: var(--msg-incoming);
-  border: 1px solid var(--msg-incoming-border);
-  border-radius: 18px 18px 18px 4px;
-  color: var(--msg-incoming-text);
-  box-shadow: none;
+  border-top-left-radius: 0;
 }
 
-.telegram-bubble.outgoing {
-  background: var(--msg-outgoing);
-  border: 1px solid var(--msg-outgoing-border);
-  border-radius: 18px 18px 4px 18px;
-  color: var(--msg-outgoing-text);
-  box-shadow: none;
+.wa-bubble.outgoing {
+  background-color: var(--msg-outgoing);
+  border-top-right-radius: 0;
 }
 
-.telegram-bubble-body {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: 2px 10px;
-  width: 100%;
-}
-
-.telegram-bubble-text {
-  flex: 1 1 auto;
-  min-width: 20px;
+.wa-bubble-text {
+  display: inline;
   white-space: pre-wrap;
   word-break: break-word;
+  color: var(--text-primary);
+  font-size: 14.2px;
 }
 
-.telegram-bubble.incoming .telegram-bubble-text {
-  color: var(--msg-incoming-text);
-}
-
-.telegram-bubble.outgoing .telegram-bubble-text {
-  color: var(--msg-outgoing-text);
-  font-weight: 450;
-}
-
-.telegram-bubble-meta {
+/* WhatsApp Metadata (Time + Ticks) - Flawlessly Inlined */
+.wa-bubble-meta {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  margin-left: auto;
-  white-space: nowrap !important;
-  flex-shrink: 0;
-  font-size: 10.5px;
+  float: right;
+  margin-top: 4px;
+  margin-left: 9px;
+  font-size: 11px;
   line-height: 1;
   user-select: none;
-  margin-bottom: 2px;
+  vertical-align: bottom;
+  position: relative;
+  top: 2px;
 }
 
-.telegram-bubble.incoming .telegram-bubble-meta {
+.wa-bubble.incoming .wa-bubble-meta {
   color: var(--msg-incoming-time);
 }
 
-.telegram-bubble.outgoing .telegram-bubble-meta {
+.wa-bubble.outgoing .wa-bubble-meta {
   color: var(--msg-outgoing-time);
 }
 
-.telegram-bubble-time {
+.wa-bubble-time {
   white-space: nowrap !important;
   font-feature-settings: "tnum";
 }
 
-.telegram-bubble-ticks {
+.wa-bubble-ticks {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.12s ease;
 }
 
-/* Telegram Date Separator */
-.telegram-date-separator {
+.wa-bubble-ticks:hover {
+  transform: scale(1.15);
+}
+
+/* WhatsApp Date Separator Badge */
+.wa-date-pill {
   align-self: center;
-  margin: 12px 0;
-  padding: 3px 12px;
-  border-radius: 12px;
-  background: rgba(10, 12, 17, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border-subtle);
-  font-size: 11px;
+  background-color: #182229;
+  color: #8696a0;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: 7.5px;
+  margin: 12px 0 8px 0;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  user-select: none;
+}
+
+/* WhatsApp End-to-End Encryption Warning */
+.wa-encryption-pill {
+  align-self: center;
+  background-color: #182229;
+  color: #ffd279;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 7.5px;
+  margin: 6px 0 14px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  max-width: 480px;
+  line-height: 1.4;
+  user-select: none;
 }
 
 /* Floating Reactions Bar */
@@ -369,11 +394,103 @@ input, textarea {
 }
 
 .telegram-reaction-pill:hover {
-  background: rgba(46, 166, 255, 0.15);
-  border-color: rgba(46, 166, 255, 0.3);
+  background: rgba(0, 168, 132, 0.2);
+  border-color: rgba(0, 168, 132, 0.4);
 }
 
-/* Telegram Native In-App Toast Banner */
+/* WhatsApp-Style Docked Bottom Composer */
+.wa-input-dock {
+  min-height: 62px;
+  background-color: var(--bg-composer);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 10px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.wa-input-field-wrap {
+  flex: 1;
+  background-color: var(--bg-input);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  min-height: 42px;
+}
+
+.wa-textarea {
+  flex: 1;
+  background-color: transparent;
+  font-size: 14.5px;
+  color: #d1d7db;
+  line-height: 20px;
+  resize: none;
+  max-height: 120px;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+.wa-textarea::placeholder {
+  color: var(--text-placeholder);
+}
+
+.wa-dock-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8696a0;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.wa-dock-icon-btn:hover {
+  color: #aebac1;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.wa-dock-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-whatsapp);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.wa-dock-send-btn:hover {
+  background-color: var(--accent-whatsapp-hover);
+}
+
+.wa-dock-send-btn:active {
+  transform: scale(0.94);
+}
+
+/* Messages Canvas */
+.telegram-messages-canvas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* In-App Toast Banner */
 .telegram-toast-banner {
   position: absolute;
   top: 72px;
@@ -382,9 +499,7 @@ input, textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(18, 22, 28, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #202c33;
   border: 1px solid var(--border-medium);
   box-shadow: none;
   color: var(--text-primary);
@@ -398,42 +513,15 @@ input, textarea {
   white-space: nowrap;
 }
 
-/* Chat Messages Canvas & Input Container */
-.telegram-messages-canvas {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.telegram-input-container {
-  padding: 12px 32px 20px 32px;
-  background-color: var(--bg-app);
-}
-
 /* Mobile Back Button */
 .mobile-back-btn {
   display: none;
 }
 
-/* ============================================================
-   RESPONSIVE DESIGN BREAKPOINTS
-   ============================================================ */
-
-/* Tablet & Medium Screens (< 1024px) */
-@media (max-width: 1024px) {
-  .discord-active-now-col {
-    display: none !important;
-  }
-}
-
-/* Mobile & Small Screens (< 768px) */
+/* Responsive Breakpoints */
 @media (max-width: 768px) {
   .activity-bar {
-    width: 52px;
-    padding: 10px 0;
+    width: 50px;
   }
 
   .sidebar-panel {
@@ -446,12 +534,10 @@ input, textarea {
     flex: 1 !important;
   }
 
-  /* When a chat is active on mobile, hide the sidebar list */
   .app-container.has-active-chat .sidebar-panel {
     display: none !important;
   }
 
-  /* When no chat is active on mobile, hide the chat pane */
   .app-container:not(.has-active-chat) .main-chat-pane {
     display: none !important;
   }
@@ -460,37 +546,15 @@ input, textarea {
     display: flex !important;
   }
 
-  .telegram-bubble-wrap {
-    max-width: 86% !important;
+  .wa-bubble-wrap {
+    max-width: 85% !important;
   }
 
   .telegram-messages-canvas {
-    padding: 14px 12px !important;
+    padding: 12px 14px !important;
   }
 
-  .telegram-input-container {
-    padding: 8px 10px 14px 10px !important;
-  }
-
-  .telegram-titlebar-badge {
-    display: none !important;
+  .wa-input-dock {
+    padding: 8px 10px !important;
   }
 }
-
-/* Extra Small Screens (< 480px) */
-@media (max-width: 480px) {
-  .activity-bar {
-    width: 46px;
-  }
-
-  .telegram-bubble-wrap {
-    max-width: 92% !important;
-  }
-
-  .telegram-bubble {
-    padding: 6px 10px 5px 10px !important;
-    font-size: 13px !important;
-  }
-}
-
-

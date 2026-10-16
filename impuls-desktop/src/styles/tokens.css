@@ -1,67 +1,73 @@
 :root {
-  /* Apple Pure Dark Mode Palette (Authentic macOS / iOS HIG) */
-  --bg-app: #000000;
-  --bg-titlebar: rgba(22, 22, 26, 0.95);
-  --bg-activity: rgba(18, 18, 22, 0.96);
-  --bg-sidebar: rgba(26, 26, 30, 0.88);
-  --bg-chat: #0a0a0c;
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-card-hover: rgba(255, 255, 255, 0.09);
-  --bg-input: rgba(255, 255, 255, 0.08);
-  --bg-popover: rgba(30, 30, 36, 0.96);
+  /* WhatsApp Official Dark Theme Architecture */
+  --bg-app: #111b21;
+  --bg-titlebar: #202c33;
+  --bg-activity: #202c33;
+  --bg-sidebar: #111b21;
+  --bg-chat: #0b141a;
+  --bg-chat-header: #202c33;
+  --bg-composer: #202c33;
+  --bg-card: #202c33;
+  --bg-card-hover: #222e35;
+  --bg-input: #2a3942;
+  --bg-popover: #233138;
 
-  /* Apple Hairline Borders & Translucency */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-focus: #007aff;
-  --border-window: rgba(255, 255, 255, 0.12);
+  /* WhatsApp Dividers & Borders */
+  --border-subtle: #222d34;
+  --border-medium: #2a3942;
+  --border-focus: #00a884;
+  --border-window: #222d34;
 
-  /* Apple SF Typography Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1a6;
-  --text-muted: #6e6e73;
+  /* WhatsApp Typography */
+  --text-primary: #e9edef;
+  --text-secondary: #8696a0;
+  --text-muted: #8696a0;
+  --text-placeholder: #8696a0;
 
-  /* Apple System Colors */
-  --accent-apple-blue: #007aff;
-  --accent-apple-blue-hover: #1a88ff;
-  --accent-apple-blue-active: #0062e0;
-  --accent-telegram: #007aff;
-  --accent-telegram-hover: #1a88ff;
-  --accent-telegram-bg: rgba(0, 122, 255, 0.15);
-  --accent-discord-green: #30d158;
+  /* WhatsApp Signature Accents */
+  --accent-whatsapp: #00a884;
+  --accent-whatsapp-hover: #06cf9c;
+  --accent-whatsapp-green: #25d366;
+  --accent-whatsapp-dark: #005c4b;
+  --accent-telegram: #00a884;
+  --accent-telegram-hover: #06cf9c;
+  --accent-telegram-bg: rgba(0, 168, 132, 0.15);
+  --accent-apple-blue: #53bdeb;
 
-  /* Apple iMessage Bubbles - Flat 2D */
-  --msg-incoming: #1f1f23;
-  --msg-incoming-border: rgba(255, 255, 255, 0.08);
-  --msg-incoming-text: #f5f5f7;
-  --msg-incoming-time: #8e8e93;
+  /* WhatsApp Chat Bubbles */
+  --msg-incoming: #202c33;
+  --msg-incoming-border: transparent;
+  --msg-incoming-text: #e9edef;
+  --msg-incoming-time: #8696a0;
 
-  --msg-outgoing: #007aff;
+  --msg-outgoing: #005c4b;
   --msg-outgoing-border: transparent;
-  --msg-outgoing-text: #ffffff;
-  --msg-outgoing-time: rgba(255, 255, 255, 0.75);
-  --msg-outgoing-check: #ffffff;
+  --msg-outgoing-text: #e9edef;
+  --msg-outgoing-time: rgba(255, 255, 255, 0.6);
 
-  --msg-time: #8e8e93;
-  --msg-check: #007aff;
+  /* WhatsApp Read Receipt Checkmarks */
+  --wa-check-read: #53bdeb;             /* The iconic WhatsApp Electric Cyan double check */
+  --wa-check-unread: rgba(255, 255, 255, 0.6); /* Delivered / sent muted gray check */
+  --msg-time: #8696a0;
+  --msg-check: #53bdeb;
 
   /* System Status Indicators */
-  --status-online: #30d158;
+  --status-online: #00a884;
   --status-idle: #ffd60a;
-  --status-dnd: #ff453a;
-  --status-offline: #6e6e73;
+  --status-dnd: #ea0038;
+  --status-offline: #8696a0;
 
-  /* Flat 2D Elevation - Clean 2D without 3D drop shadows */
+  /* Clean Flat 2D Elevation (No 3D Blur Shadows) */
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
 
-  /* Apple Spring & Smooth Curves */
+  /* Curves & Animation Timing */
   --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* Apple SF Pro Typography Stack */
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+  /* WhatsApp Pro Typography Stack */
+  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", Consolas, Menlo, Monaco, monospace;
 }

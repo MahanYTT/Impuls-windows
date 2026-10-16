@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Chat, TabType } from '../types';
-import { Search, Plus, ShieldCheck, Radio, Users, MessageSquare } from 'lucide-react';
+import { Search, Plus, ShieldCheck, Radio, Users, CheckCheck, Check, MoreVertical, Filter } from 'lucide-react';
 
 interface ChatListProps {
   chats: Chat[];
@@ -9,6 +9,7 @@ interface ChatListProps {
   onNewChat: (title: string, username: string) => void;
   onOpenNewGroup: () => void;
   currentTab: TabType;
+  onTabChange?: (tab: TabType) => void;
 }
 
 export const ChatList: React.FC<ChatListProps> = ({
@@ -18,20 +19,28 @@ export const ChatList: React.FC<ChatListProps> = ({
   onNewChat,
   onOpenNewGroup,
   currentTab,
+  onTabChange,
 }) => {
   const [search, setSearch] = useState('');
   const [showNewModal, setShowNewModal] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUsername, setNewUsername] = useState('');
+  const [filterMode, setFilterMode] = useState<'all' | 'unread' | 'groups' | 'channels'>('all');
 
   const filteredChats = chats.filter(chat => {
+    if (filterMode === 'unread' && (!chat.unreadCount || chat.unreadCount === 0)) return false;
+    if (filterMode === 'groups' && chat.type !== 'group') return false;
+    if (filterMode === 'channels' && chat.type !== 'channel') return false;
+
     if (currentTab === 'groups' && chat.type !== 'group') return false;
     if (currentTab === 'channels' && chat.type !== 'channel') return false;
     if (currentTab === 'dm' && (chat.type === 'channel' || chat.type === 'group')) return false;
+
     if (!search.trim()) return true;
     return (
       chat.title.toLowerCase().includes(search.toLowerCase()) ||
-      (chat.username && chat.username.toLowerCase().includes(search.toLowerCase()))
+      (chat.username && chat.username.toLowerCase().includes(search.toLowerCase())) ||
+      (chat.lastMessage && chat.lastMessage.toLowerCase().includes(search.toLowerCase()))
     );
   });
 
@@ -44,117 +53,159 @@ export const ChatList: React.FC<ChatListProps> = ({
     setShowNewModal(false);
   };
 
-  const sectionTitle = (() => {
-    if (currentTab === 'groups') return 'WhatsApp Groups';
-    if (currentTab === 'channels') return 'Encrypted Channels';
-    return 'Conversations';
-  })();
-
   return (
     <div className="sidebar-panel">
-      {/* Top Header & Search */}
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
-            {sectionTitle}
-          </h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {/* WhatsApp-Style New Group Button */}
-            <button
-              onClick={onOpenNewGroup}
-              className="telegram-press"
-              title="Create Easy WhatsApp-Style Group"
-              style={{
-                height: '28px',
-                padding: '0 8px',
-                borderRadius: '6px',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-subtle)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                color: 'var(--accent-telegram)',
-                fontSize: '11.5px',
-                fontWeight: 600,
-              }}
-            >
-              <Users size={14} />
-              <span>+ Group</span>
-            </button>
+      {/* WhatsApp Sidebar Header (Height 59px, #202c33) */}
+      <div style={{
+        height: '59px',
+        padding: '0 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: 'var(--bg-chat-header)',
+        borderBottom: '1px solid var(--border-subtle)',
+        flexShrink: 0,
+      }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+          Chats
+        </h2>
 
-            {/* New DM / Channel Button */}
-            <button
-              onClick={() => setShowNewModal(true)}
-              className="telegram-press"
-              title="Start new conversation or channel"
-              style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '6px',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-subtle)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <Plus size={16} />
-            </button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* New Group Button */}
+          <button
+            onClick={onOpenNewGroup}
+            className="wa-dock-icon-btn"
+            title="New Group (WhatsApp Style)"
+            style={{ width: '36px', height: '36px' }}
+          >
+            <Users size={19} />
+          </button>
+
+          {/* New Conversation Button */}
+          <button
+            onClick={() => setShowNewModal(true)}
+            className="wa-dock-icon-btn"
+            title="New Direct Message"
+            style={{ width: '36px', height: '36px' }}
+          >
+            <Plus size={20} />
+          </button>
         </div>
+      </div>
 
-        {/* Search Input */}
+      {/* WhatsApp Search Bar Section */}
+      <div style={{
+        padding: '8px 12px 6px 12px',
+        backgroundColor: 'var(--bg-sidebar)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        flexShrink: 0,
+      }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           backgroundColor: 'var(--bg-input)',
-          border: '1px solid var(--border-subtle)',
           borderRadius: '8px',
-          padding: '0 10px',
+          padding: '0 12px',
+          height: '36px',
         }}>
-          <Search size={14} color="var(--text-muted)" />
+          <Search size={15} color="var(--text-muted)" style={{ flexShrink: 0, marginRight: '10px' }} />
           <input
             type="text"
-            placeholder="Search chats, groups..."
+            placeholder="Search or start new chat"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
               width: '100%',
-              padding: '8px 8px',
               backgroundColor: 'transparent',
-              fontSize: '13px',
+              fontSize: '13.5px',
               color: 'var(--text-primary)',
             }}
           />
         </div>
+
+        {/* Filter Chips Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
+          <button
+            onClick={() => setFilterMode('all')}
+            style={{
+              padding: '4px 12px',
+              borderRadius: '16px',
+              fontSize: '12px',
+              fontWeight: 500,
+              backgroundColor: filterMode === 'all' ? 'var(--accent-whatsapp)' : 'var(--bg-card)',
+              color: filterMode === 'all' ? '#ffffff' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setFilterMode('unread')}
+            style={{
+              padding: '4px 12px',
+              borderRadius: '16px',
+              fontSize: '12px',
+              fontWeight: 500,
+              backgroundColor: filterMode === 'unread' ? 'var(--accent-whatsapp)' : 'var(--bg-card)',
+              color: filterMode === 'unread' ? '#ffffff' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Unread
+          </button>
+          <button
+            onClick={() => setFilterMode('groups')}
+            style={{
+              padding: '4px 12px',
+              borderRadius: '16px',
+              fontSize: '12px',
+              fontWeight: 500,
+              backgroundColor: filterMode === 'groups' ? 'var(--accent-whatsapp)' : 'var(--bg-card)',
+              color: filterMode === 'groups' ? '#ffffff' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Groups
+          </button>
+          <button
+            onClick={() => setFilterMode('channels')}
+            style={{
+              padding: '4px 12px',
+              borderRadius: '16px',
+              fontSize: '12px',
+              fontWeight: 500,
+              backgroundColor: filterMode === 'channels' ? 'var(--accent-whatsapp)' : 'var(--bg-card)',
+              color: filterMode === 'channels' ? '#ffffff' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Channels
+          </button>
+        </div>
       </div>
 
-      {/* Conversations List */}
+      {/* WhatsApp Contact / Chat Item List */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
         {filteredChats.length === 0 ? (
-          <div style={{ padding: '36px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-            {currentTab === 'groups' ? (
-              <div>
-                <p style={{ marginBottom: '12px' }}>No groups created yet.</p>
-                <button
-                  onClick={onOpenNewGroup}
-                  className="telegram-press"
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '6px',
-                    backgroundColor: 'var(--accent-telegram-bg)',
-                    color: 'var(--accent-telegram)',
-                    fontSize: '12.5px',
-                    fontWeight: 600,
-                  }}
-                >
-                  Create Your First Group
-                </button>
-              </div>
-            ) : (
-              'No conversations found.'
-            )}
+          <div style={{ padding: '40px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+            <p style={{ marginBottom: '10px' }}>No chats found.</p>
+            <button
+              onClick={() => setShowNewModal(true)}
+              style={{
+                color: 'var(--accent-whatsapp)',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+              }}
+            >
+              Start a new chat
+            </button>
           </div>
         ) : (
           filteredChats.map(chat => {
@@ -165,44 +216,46 @@ export const ChatList: React.FC<ChatListProps> = ({
               <div
                 key={chat.id}
                 onClick={() => onSelectChat(chat.id)}
-                className="telegram-press"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  padding: '10px 12px',
-                  margin: '2px 8px',
-                  borderRadius: '10px',
+                  gap: '14px',
+                  padding: '0 16px',
+                  height: '72px',
                   cursor: 'pointer',
-                  backgroundColor: isActive ? 'rgba(0, 122, 255, 0.18)' : 'transparent',
-                  border: isActive ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
-                  transition: 'all 0.12s ease',
+                  backgroundColor: isActive ? 'var(--bg-input)' : 'transparent',
+                  transition: 'background-color 0.12s ease',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = 'var(--bg-card)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                {/* Chat Avatar */}
+                {/* 49px WhatsApp Avatar */}
                 <div style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: isGroup ? '12px' : (chat.type === 'channel' ? '10px' : '50%'),
-                  backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : (chat.type === 'channel' ? '#1c2430' : 'var(--accent-base)')),
+                  width: '49px',
+                  height: '49px',
+                  borderRadius: '50%',
+                  backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : (chat.type === 'channel' ? '#1c2430' : 'var(--accent-whatsapp-dark)')),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#fff',
                   fontWeight: 600,
-                  fontSize: chat.avatar ? '20px' : '15px',
+                  fontSize: chat.avatar ? '22px' : '17px',
                   flexShrink: 0,
                   position: 'relative',
-                  border: '1px solid var(--border-subtle)',
                 }}>
                   {chat.avatar ? (
                     chat.avatar
                   ) : chat.type === 'system' ? (
-                    <ShieldCheck size={20} color="#a0b4cc" />
+                    <ShieldCheck size={22} color="#a0b4cc" />
                   ) : chat.type === 'channel' ? (
-                    <Radio size={18} color="#8fa8c8" />
+                    <Radio size={20} color="#8fa8c8" />
                   ) : isGroup ? (
-                    <Users size={18} color="#fff" />
+                    <Users size={20} color="#fff" />
                   ) : (
                     chat.title.charAt(0).toUpperCase()
                   )}
@@ -210,10 +263,10 @@ export const ChatList: React.FC<ChatListProps> = ({
                   {chat.isOnline && !isGroup && (
                     <span style={{
                       position: 'absolute',
-                      bottom: '0px',
-                      right: '0px',
-                      width: '9px',
-                      height: '9px',
+                      bottom: '2px',
+                      right: '2px',
+                      width: '11px',
+                      height: '11px',
                       borderRadius: '50%',
                       backgroundColor: 'var(--status-online)',
                       border: '2px solid var(--bg-sidebar)',
@@ -221,12 +274,22 @@ export const ChatList: React.FC<ChatListProps> = ({
                   )}
                 </div>
 
-                {/* Details */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                {/* Details Right Block with WhatsApp Hairline Divider */}
+                <div style={{
+                  flex: 1,
+                  minWidth: 0,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  borderBottom: '1px solid var(--border-subtle)',
+                  paddingRight: '4px',
+                }}>
+                  {/* Top Line: Name and Time */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
                     <span style={{
-                      fontSize: '13.5px',
-                      fontWeight: isActive ? 600 : 500,
+                      fontSize: '16px',
+                      fontWeight: 500,
                       color: 'var(--text-primary)',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -235,38 +298,53 @@ export const ChatList: React.FC<ChatListProps> = ({
                       {chat.title}
                     </span>
                     {chat.lastMessageTime && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                      <span style={{
+                        fontSize: '12px',
+                        color: chat.unreadCount && chat.unreadCount > 0 ? 'var(--accent-whatsapp-green)' : 'var(--text-muted)',
+                        fontWeight: chat.unreadCount && chat.unreadCount > 0 ? 600 : 400,
+                      }}>
                         {new Date(chat.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     )}
                   </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: 'var(--text-muted)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {chat.lastMessage || 'No messages yet'}
+
+                  {/* Bottom Line: Last Message Preview & Unread Pill */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{
+                      fontSize: '13.5px',
+                      color: 'var(--text-secondary)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      maxWidth: '220px',
+                    }}>
+                      {/* Read status icon on outgoing preview */}
+                      <CheckCheck size={15} color="var(--wa-check-read)" style={{ flexShrink: 0 }} />
+                      <span>{chat.lastMessage || 'Conversation initiated'}</span>
+                    </div>
+
+                    {chat.unreadCount && chat.unreadCount > 0 ? (
+                      <span style={{
+                        backgroundColor: 'var(--accent-whatsapp-green)',
+                        color: '#111b21',
+                        borderRadius: '12px',
+                        minWidth: '20px',
+                        height: '20px',
+                        padding: '0 6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                      }}>
+                        {chat.unreadCount}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
-
-                {/* Unread Pill */}
-                {chat.unreadCount > 0 && (
-                  <span
-                    className="telegram-check-animate"
-                    style={{
-                      padding: '2px 7px',
-                      borderRadius: '12px',
-                      backgroundColor: 'var(--accent-telegram)',
-                      color: '#ffffff',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                    }}
-                  >
-                    {chat.unreadCount}
-                  </span>
-                )}
               </div>
             );
           })
@@ -277,9 +355,11 @@ export const ChatList: React.FC<ChatListProps> = ({
       {showNewModal && (
         <div style={{
           position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(6px)',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -287,23 +367,22 @@ export const ChatList: React.FC<ChatListProps> = ({
         }}>
           <div className="telegram-modal-pop" style={{
             width: '380px',
-            backgroundColor: 'var(--bg-card)',
+            backgroundColor: 'var(--bg-popover)',
             border: '1px solid var(--border-medium)',
-            borderRadius: '14px',
+            borderRadius: '12px',
             padding: '24px',
-            boxShadow: 'var(--shadow-lg)',
           }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px' }}>
-              Create New Chat or Channel
+            <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px' }}>
+              New Chat or Channel
             </h3>
             <form onSubmit={handleCreateNew} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Title / Contact Name
+                  Contact Name / Title
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Project Alpha"
+                  placeholder="e.g. Mahan YTT"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   style={{
@@ -312,19 +391,20 @@ export const ChatList: React.FC<ChatListProps> = ({
                     backgroundColor: 'var(--bg-input)',
                     border: '1px solid var(--border-subtle)',
                     borderRadius: '6px',
-                    fontSize: '13px',
+                    fontSize: '13.5px',
                     color: 'var(--text-primary)',
                   }}
+                  autoFocus
                 />
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Unique @handle
+                  Username (optional)
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. project_alpha"
+                  placeholder="e.g. mahan"
                   value={newUsername}
                   onChange={(e) => setNewUsername(e.target.value)}
                   style={{
@@ -333,34 +413,37 @@ export const ChatList: React.FC<ChatListProps> = ({
                     backgroundColor: 'var(--bg-input)',
                     border: '1px solid var(--border-subtle)',
                     borderRadius: '6px',
-                    fontSize: '13px',
+                    fontSize: '13.5px',
                     color: 'var(--text-primary)',
                   }}
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="telegram-press"
-                  style={{ padding: '8px 14px', fontSize: '13px', color: 'var(--text-secondary)' }}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '6px',
+                    color: 'var(--text-secondary)',
+                    fontSize: '13px',
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="telegram-press"
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: 'var(--accent-telegram)',
+                    padding: '8px 18px',
                     borderRadius: '6px',
-                    fontSize: '13px',
-                    fontWeight: 500,
+                    backgroundColor: 'var(--accent-whatsapp)',
                     color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '13px',
                   }}
                 >
-                  Create
+                  Start Chat
                 </button>
               </div>
             </form>

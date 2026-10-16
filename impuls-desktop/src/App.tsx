@@ -194,6 +194,15 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleToggleReadMessage = (messageId: string) => {
+    if (!activeChatId) return;
+    setMessages(prev => {
+      const updated = prev.map(m => m.id === messageId ? { ...m, isRead: !m.isRead } : m);
+      storage.saveMessages(activeChatId, updated);
+      return updated;
+    });
+  };
+
   const handleNewChat = (title: string, username: string) => {
     const isChannel = currentTab === 'channels';
     const newChat: Chat = {
@@ -307,14 +316,16 @@ export const App: React.FC = () => {
               onNewChat={handleNewChat}
               onOpenNewGroup={() => setShowNewGroupModal(true)}
               currentTab={currentTab}
+              onTabChange={setCurrentTab}
             />
 
-            {/* Zone 3: Main Telegram-style Chat Pane */}
+            {/* Zone 3: Main WhatsApp-style Chat Pane */}
             <ChatView
               chat={activeChat}
               messages={messages}
               currentUser={currentUser}
               onSendMessage={handleSendMessage}
+              onToggleReadMessage={handleToggleReadMessage}
               onBack={() => setActiveChatId(null)}
             />
           </>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { ImpulsLogo } from '../assets/Logo';
 import { TabType, User } from '../types';
-import { MessageSquare, Hash, FolderArchive, Settings, LogOut, ShieldCheck, Users, UserPlus } from 'lucide-react';
-
+import { MessageSquare, Hash, FolderArchive, Settings, LogOut, Users, UserPlus } from 'lucide-react';
 
 interface ActivityBarProps {
   currentTab: TabType;
@@ -21,116 +20,122 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 }) => {
   return (
     <div className="activity-bar">
-      {/* Impuls Brand Mark */}
-      <div style={{ marginBottom: '24px' }}>
-        <ImpulsLogo size={36} />
-      </div>
+      {/* Top Section: Brand Logo + Primary Tabs */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '8px' }}>
+        {/* Brand Mark */}
+        <div style={{ marginBottom: '8px' }}>
+          <ImpulsLogo size={32} />
+        </div>
 
-      {/* Navigation Buttons */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, width: '100%', alignItems: 'center' }}>
+        {/* Chats / Direct Messages */}
         <button
-          title="Direct Messages"
+          title="Chats"
           onClick={() => onTabChange('dm')}
-          className="telegram-press"
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'dm' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
-            color: currentTab === 'dm' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            border: currentTab === 'dm' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
+            backgroundColor: currentTab === 'dm' ? 'rgba(0, 168, 132, 0.16)' : 'transparent',
+            color: currentTab === 'dm' ? 'var(--accent-whatsapp)' : 'var(--text-muted)',
+            borderLeft: currentTab === 'dm' ? '3px solid var(--accent-whatsapp)' : '3px solid transparent',
+            transition: 'all 0.12s ease',
           }}
         >
           <MessageSquare size={20} />
         </button>
 
+        {/* WhatsApp Groups */}
         <button
-          title="WhatsApp-Style Groups"
+          title="Groups"
           onClick={() => onTabChange('groups')}
-          className="telegram-press"
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'groups' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
-            color: currentTab === 'groups' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            border: currentTab === 'groups' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
+            backgroundColor: currentTab === 'groups' ? 'rgba(0, 168, 132, 0.16)' : 'transparent',
+            color: currentTab === 'groups' ? 'var(--accent-whatsapp)' : 'var(--text-muted)',
+            borderLeft: currentTab === 'groups' ? '3px solid var(--accent-whatsapp)' : '3px solid transparent',
+            transition: 'all 0.12s ease',
           }}
         >
           <Users size={20} />
         </button>
 
+        {/* Friends & Contacts */}
         <button
-          title="Discord-Style Friends & Network Discovery"
+          title="Contacts & Directory"
           onClick={() => onTabChange('friends')}
-          className="telegram-press"
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'friends' ? 'rgba(48, 209, 88, 0.16)' : 'transparent',
-            color: currentTab === 'friends' ? 'var(--status-online)' : 'var(--text-muted)',
-            border: currentTab === 'friends' ? '1px solid rgba(48, 209, 88, 0.35)' : '1px solid transparent',
+            backgroundColor: currentTab === 'friends' ? 'rgba(0, 168, 132, 0.16)' : 'transparent',
+            color: currentTab === 'friends' ? 'var(--accent-whatsapp)' : 'var(--text-muted)',
+            borderLeft: currentTab === 'friends' ? '3px solid var(--accent-whatsapp)' : '3px solid transparent',
+            transition: 'all 0.12s ease',
           }}
         >
           <UserPlus size={20} />
         </button>
 
+        {/* Channels */}
         <button
-          title="Public & Encrypted Channels"
+          title="Channels & Broadcasts"
           onClick={() => onTabChange('channels')}
-          className="telegram-press"
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'channels' ? 'rgba(0, 122, 255, 0.16)' : 'transparent',
-            color: currentTab === 'channels' ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-            border: currentTab === 'channels' ? '1px solid rgba(0, 122, 255, 0.35)' : '1px solid transparent',
+            backgroundColor: currentTab === 'channels' ? 'rgba(0, 168, 132, 0.16)' : 'transparent',
+            color: currentTab === 'channels' ? 'var(--accent-whatsapp)' : 'var(--text-muted)',
+            borderLeft: currentTab === 'channels' ? '3px solid var(--accent-whatsapp)' : '3px solid transparent',
+            transition: 'all 0.12s ease',
           }}
         >
           <Hash size={20} />
         </button>
 
+        {/* Media Vault */}
         <button
-          title="Files & Media Vault"
+          title="Encrypted Files & Media Vault"
           onClick={() => onTabChange('vault')}
-          className="telegram-press"
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: currentTab === 'vault' ? 'var(--bg-card-hover)' : 'transparent',
-            color: currentTab === 'vault' ? 'var(--text-primary)' : 'var(--text-muted)',
+            backgroundColor: currentTab === 'vault' ? 'rgba(0, 168, 132, 0.16)' : 'transparent',
+            color: currentTab === 'vault' ? 'var(--accent-whatsapp)' : 'var(--text-muted)',
+            borderLeft: currentTab === 'vault' ? '3px solid var(--accent-whatsapp)' : '3px solid transparent',
+            transition: 'all 0.12s ease',
           }}
         >
           <FolderArchive size={20} />
         </button>
       </div>
 
-      {/* Bottom Profile & Actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
+      {/* Bottom Section: Settings + Logout + Profile Avatar */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '8px' }}>
         <button
-          title="Settings"
+          title="Settings & Encryption"
           onClick={onOpenSettings}
           style={{
-            width: '40px',
-            height: '40px',
+            width: '38px',
+            height: '38px',
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
@@ -142,11 +147,11 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
         </button>
 
         <button
-          title="Logout"
+          title="Log Out"
           onClick={onLogout}
           style={{
-            width: '40px',
-            height: '40px',
+            width: '38px',
+            height: '38px',
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
@@ -157,14 +162,14 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
           <LogOut size={18} />
         </button>
 
-        {/* User Avatar with Status indicator */}
+        {/* User Profile Avatar with Status Dot (Properly fitted without overflow) */}
         <div
           title={`${user.displayName} (@${user.username})`}
           style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            backgroundColor: 'var(--accent-base)',
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--accent-whatsapp-dark)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -173,6 +178,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
             fontSize: '13px',
             position: 'relative',
             cursor: 'pointer',
+            marginTop: '4px',
           }}
           onClick={onOpenSettings}
         >
@@ -180,10 +186,10 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
           <span
             style={{
               position: 'absolute',
-              bottom: '-2px',
-              right: '-2px',
-              width: '10px',
-              height: '10px',
+              bottom: '0px',
+              right: '0px',
+              width: '9px',
+              height: '9px',
               borderRadius: '50%',
               backgroundColor: 'var(--status-online)',
               border: '2px solid var(--bg-activity)',

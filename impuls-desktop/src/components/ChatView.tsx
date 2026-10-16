@@ -18,9 +18,7 @@ import {
   Video,
   ArrowDown,
   ArrowLeft,
-  ArrowUp,
   X,
-  UserPlus
 } from 'lucide-react';
 
 interface ChatViewProps {
@@ -28,6 +26,7 @@ interface ChatViewProps {
   messages: Message[];
   currentUser: User;
   onSendMessage: (text: string) => void;
+  onToggleReadMessage?: (messageId: string) => void;
   onOpenGroupInfo?: (chat: Chat) => void;
   onBack?: () => void;
 }
@@ -45,6 +44,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   messages,
   currentUser,
   onSendMessage,
+  onToggleReadMessage,
   onOpenGroupInfo,
   onBack,
 }) => {
@@ -61,6 +61,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       setToastMessage(prev => prev === msg ? null : prev);
     }, 3200);
   };
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -115,29 +116,39 @@ export const ChatView: React.FC<ChatViewProps> = ({
     setHoveredMessageId(null);
   };
 
+  const handleToggleRead = (messageId: string) => {
+    if (onToggleReadMessage) {
+      onToggleReadMessage(messageId);
+    } else if (chat) {
+      const currentMsgs = storage.getMessages(chat.id);
+      const updated = currentMsgs.map(m => m.id === messageId ? { ...m, isRead: !m.isRead } : m);
+      storage.saveMessages(chat.id, updated);
+      showToast('Toggled message read status');
+    }
+  };
+
   if (!chat) {
     return (
       <div className="main-chat-pane" style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <div className="telegram-bubble-pop" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+        <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
           <div style={{
             width: '68px',
             height: '68px',
-            borderRadius: '20px',
+            borderRadius: '50%',
             backgroundColor: 'var(--bg-card)',
             border: '1px solid var(--border-medium)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 18px',
-            boxShadow: 'var(--shadow-md)',
           }}>
-            <Lock size={30} color="var(--accent-telegram)" />
+            <Lock size={30} color="var(--accent-whatsapp)" />
           </div>
-          <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
-            Select a conversation
+          <h3 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Impuls for Windows & Web
           </h3>
-          <p style={{ fontSize: '13px', maxWidth: '300px', margin: '0 auto', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-            Pick a contact from the left, open an encrypted channel, or create an instant WhatsApp-style group.
+          <p style={{ fontSize: '13.5px', maxWidth: '340px', margin: '0 auto', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            Send and receive end-to-end encrypted messages, create instant company groups, and collaborate securely.
           </p>
         </div>
       </div>
@@ -149,36 +160,37 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   return (
     <div className="main-chat-pane">
-      {/* Sleek In-App Toast Notification */}
+      {/* In-App Toast Notification */}
       {toastMessage && (
         <div className="telegram-toast-banner">
-          <ShieldCheck size={16} color="var(--accent-telegram)" />
+          <ShieldCheck size={16} color="var(--accent-whatsapp)" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Telegram-style Top Header */}
+      {/* WhatsApp Official Top Header (Height 59px, #202c33) */}
       <div style={{
-        height: '60px',
+        height: '59px',
         borderBottom: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
-        backgroundColor: 'var(--bg-app)',
+        padding: '0 16px',
+        backgroundColor: 'var(--bg-chat-header)',
         zIndex: 10,
+        flexShrink: 0,
       }}>
         {/* Chat Avatar & Details with Mobile Back Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
           {onBack && (
             <button
               onClick={onBack}
-              className="mobile-back-btn telegram-press"
+              className="mobile-back-btn"
               title="Back to conversations"
               style={{
                 width: '32px',
                 height: '32px',
-                borderRadius: '8px',
+                borderRadius: '50%',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'var(--text-primary)',
@@ -187,7 +199,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 flexShrink: 0,
               }}
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={20} />
             </button>
           )}
 
@@ -201,30 +213,29 @@ export const ChatView: React.FC<ChatViewProps> = ({
               minWidth: 0,
             }}
           >
-            {/* Avatar with Status Ring */}
+            {/* WhatsApp Avatar */}
             <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: isGroup ? '12px' : '50%',
-              backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : 'var(--accent-base)'),
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              backgroundColor: chat.avatarColor || (chat.type === 'system' ? '#2c394b' : 'var(--accent-whatsapp-dark)'),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
               fontWeight: 600,
-              fontSize: chat.avatar ? '20px' : '15px',
+              fontSize: chat.avatar ? '19px' : '15px',
               position: 'relative',
               flexShrink: 0,
-              boxShadow: 'var(--shadow-sm)',
             }}>
               {chat.avatar ? (
                 chat.avatar
               ) : chat.type === 'system' ? (
-                <ShieldCheck size={22} color="#a0b4cc" />
+                <ShieldCheck size={20} color="#a0b4cc" />
               ) : chat.type === 'channel' ? (
-                <Radio size={20} color="#8fa8c8" />
+                <Radio size={18} color="#8fa8c8" />
               ) : isGroup ? (
-                <Users size={20} color="#fff" />
+                <Users size={18} color="#fff" />
               ) : (
                 chat.title.charAt(0).toUpperCase()
               )}
@@ -232,123 +243,118 @@ export const ChatView: React.FC<ChatViewProps> = ({
               {chat.isOnline && !isGroup && (
                 <span style={{
                   position: 'absolute',
-                  bottom: '0',
-                  right: '0',
+                  bottom: '1px',
+                  right: '1px',
                   width: '10px',
                   height: '10px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--status-online)',
-                  border: '2px solid var(--bg-app)',
+                  border: '2px solid var(--bg-chat-header)',
                 }} />
               )}
             </div>
 
-            <div>
+            {/* Name & Status */}
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <span style={{
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  color: 'var(--text-primary)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
                   {chat.title}
-                </h2>
+                </span>
                 {chat.username && (
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
                     @{chat.username}
                   </span>
                 )}
               </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', marginTop: '2px' }}>
-                {isGroup ? (
-                  <span style={{ color: 'var(--accent-telegram)' }}>
-                    {memberCount} members • WhatsApp Group Sync
-                  </span>
-                ) : chat.type === 'system' ? (
-                  <span style={{ color: 'var(--status-online)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-online)' }} />
-                    Encrypted MTProto 2.0 • Server 80.201.130.248
-                  </span>
-                ) : (
-                  <span style={{ color: 'var(--status-online)' }}>
-                    online
-                  </span>
-                )}
-              </div>
+              <span style={{
+                fontSize: '12.5px',
+                color: chat.isOnline ? 'var(--status-online)' : 'var(--text-muted)',
+                lineHeight: 1.2,
+                marginTop: '1px',
+              }}>
+                {chat.isOnline ? 'online' : (isGroup ? `${memberCount} participants` : 'last seen recently')}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Top Header Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
-            title="Search conversation"
-            className="telegram-press"
-            style={{ width: '34px', height: '34px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
+            title="Search in conversation"
+            className="wa-dock-icon-btn"
+            onClick={() => showToast('Search within messages ready.')}
           >
-            <Search size={17} />
+            <Search size={19} />
           </button>
 
-          <button
-            title="Encrypted Voice Call"
-            className="telegram-press"
-            style={{ width: '34px', height: '34px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
-            onClick={() => showToast('Encrypted MTProto Voice Tunnel initialized on 80.201.130.248')}
-          >
-            <Phone size={17} />
-          </button>
+          {!isGroup && (
+            <>
+              <button
+                title="Encrypted Voice Call"
+                className="wa-dock-icon-btn"
+                onClick={() => showToast('Connecting encrypted voice channel...')}
+              >
+                <Phone size={19} />
+              </button>
+              <button
+                title="HD Video Stream"
+                className="wa-dock-icon-btn"
+                onClick={() => showToast('Peer video stream initializing...')}
+              >
+                <Video size={19} />
+              </button>
+            </>
+          )}
 
           <button
-            title="More options"
-            className="telegram-press"
-            style={{ width: '34px', height: '34px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
+            title="Menu & Options"
+            className="wa-dock-icon-btn"
+            onClick={() => isGroup ? setShowGroupDrawer(true) : showToast('Chat encryption verified via MTProto 2.0')}
           >
-            <MoreVertical size={17} />
+            <MoreVertical size={19} />
           </button>
         </div>
       </div>
 
-      {/* Messages Canvas with Telegram wallpaper effect */}
+      {/* WhatsApp Message Canvas */}
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
         className="telegram-messages-canvas"
       >
-        {/* Telegram Date Separator Pill */}
-        <div className="telegram-date-separator">
-          Today, {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+        {/* End-to-End Encryption Pill */}
+        <div className="wa-encryption-pill">
+          <Lock size={13} color="#ffd279" />
+          <span>Messages are end-to-end encrypted. No one outside of this chat can read or listen to them.</span>
         </div>
 
-        {messages.map((msg, index) => {
-          const isMine = msg.isOutgoing || msg.senderId === currentUser.id;
+        {/* Date Separator Pill */}
+        <div className="wa-date-pill">Today</div>
+
+        {/* Message List */}
+        {messages.map((msg) => {
+          const isMine = msg.senderId === currentUser?.id || msg.isOutgoing;
           const isHovered = hoveredMessageId === msg.id;
+          const showSenderName = isGroup && !isMine;
+          const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
           return (
             <div
               key={msg.id}
+              className={`wa-message-row ${isMine ? 'outgoing' : 'incoming'}`}
               onMouseEnter={() => setHoveredMessageId(msg.id)}
               onMouseLeave={() => setHoveredMessageId(null)}
-              className="telegram-bubble-pop"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: isMine ? 'flex-end' : 'flex-start',
-                width: '100%',
-                position: 'relative',
-              }}
             >
-              {/* Sender Name in Group Chat */}
-              {!isMine && isGroup && (
-                <span style={{
-                  fontSize: '11.5px',
-                  fontWeight: 600,
-                  color: msg.senderColor || 'var(--accent-telegram)',
-                  marginBottom: '3px',
-                  marginLeft: '8px',
-                }}>
-                  {msg.senderName}
-                </span>
-              )}
-
-              {/* Message Bubble Container with Floating Reaction Bar */}
-              <div className="telegram-bubble-wrap">
-                {/* Floating Quick Reaction Bar on Hover */}
+              <div className="wa-bubble-wrap">
+                {/* Floating Reaction Bar on Hover */}
                 {isHovered && (
                   <div
                     className="telegram-reactions-bar"
@@ -370,29 +376,43 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   </div>
                 )}
 
-                {/* Message Bubble */}
-                <div
-                  className={`telegram-bubble ${isMine ? 'outgoing' : 'incoming'}`}
-                >
-                  <div className="telegram-bubble-body">
-                    <span className="telegram-bubble-text">{msg.text}</span>
+                {/* Sender Name in Group */}
+                {showSenderName && (
+                  <span style={{
+                    fontSize: '12.5px',
+                    fontWeight: 600,
+                    color: msg.senderColor || 'var(--accent-whatsapp)',
+                    marginBottom: '2px',
+                    paddingLeft: '4px',
+                  }}>
+                    {msg.senderName}
+                  </span>
+                )}
 
-                    {/* Timestamp & Delivery / Read Checkmarks */}
-                    <span className="telegram-bubble-meta">
-                      <span className="telegram-bubble-time">
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {/* WhatsApp Compact Message Bubble */}
+                <div className={`wa-bubble ${isMine ? 'outgoing' : 'incoming'}`}>
+                  <span className="wa-bubble-text">{msg.text}</span>
+
+                  {/* WhatsApp Inlined Timestamp & Read Receipt Checkmarks */}
+                  <span className="wa-bubble-meta">
+                    <span className="wa-bubble-time">{timeStr}</span>
+                    {isMine && (
+                      <span
+                        className="wa-bubble-ticks"
+                        title={msg.isRead ? "Read by recipient (Click to toggle)" : "Delivered to device (Click to toggle)"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleRead(msg.id);
+                        }}
+                      >
+                        {msg.isRead ? (
+                          <CheckCheck size={16} color="var(--wa-check-read)" strokeWidth={2.5} />
+                        ) : (
+                          <Check size={15} color="var(--wa-check-unread)" strokeWidth={2.3} />
+                        )}
                       </span>
-                      {isMine && (
-                        <span className="telegram-check-animate telegram-bubble-ticks" title={msg.isRead ? "Read" : "Delivered"}>
-                          {msg.isRead ? (
-                            <CheckCheck size={13} color="#ffffff" />
-                          ) : (
-                            <Check size={13} color="rgba(255, 255, 255, 0.65)" />
-                          )}
-                        </span>
-                      )}
-                    </span>
-                  </div>
+                    )}
+                  </span>
                 </div>
 
                 {/* Attached Reactions Pills */}
@@ -422,25 +442,22 @@ export const ChatView: React.FC<ChatViewProps> = ({
       {showScrollBottom && (
         <button
           onClick={scrollToBottom}
-          className="telegram-press"
+          className="wa-dock-icon-btn"
           style={{
             position: 'absolute',
-            bottom: '84px',
-            right: '32px',
-            width: '40px',
-            height: '40px',
+            bottom: '76px',
+            right: '28px',
+            width: '42px',
+            height: '42px',
             borderRadius: '50%',
             backgroundColor: 'var(--bg-card)',
             border: '1px solid var(--border-medium)',
-            boxShadow: 'var(--shadow-md)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--accent-telegram)',
+            color: 'var(--accent-whatsapp)',
             zIndex: 30,
           }}
+          title="Scroll to bottom"
         >
-          <ArrowDown size={18} />
+          <ArrowDown size={20} />
         </button>
       )}
 
@@ -450,15 +467,14 @@ export const ChatView: React.FC<ChatViewProps> = ({
           className="telegram-modal-pop"
           style={{
             position: 'absolute',
-            bottom: '76px',
-            left: '24px',
-            backgroundColor: 'var(--bg-card)',
+            bottom: '72px',
+            left: '16px',
+            backgroundColor: 'var(--bg-popover)',
             border: '1px solid var(--border-medium)',
-            borderRadius: '12px',
+            borderRadius: '10px',
             padding: '12px',
-            boxShadow: 'var(--shadow-lg)',
             zIndex: 100,
-            width: '260px',
+            width: '280px',
           }}
         >
           <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>
@@ -473,6 +489,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <button
                 key={emoji}
                 onClick={() => insertEmoji(emoji)}
+                className="telegram-press"
                 style={{
                   fontSize: '18px',
                   padding: '4px',
@@ -480,9 +497,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'transform 0.1s ease',
                 }}
-                className="telegram-press"
               >
                 {emoji}
               </button>
@@ -491,119 +506,61 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
       )}
 
-      {/* Telegram-style Composer Input Dock */}
-      <div className="telegram-input-container" style={{
-        borderTop: '1px solid var(--border-subtle)',
-      }}>
-        <form onSubmit={handleSend} style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          gap: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.08)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: '24px',
-          padding: '5px 12px',
-          backdropFilter: 'blur(20px)',
-        }}>
-          {/* Emoji Toggle */}
-          <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            title="Emoji & Stickers"
-            className="telegram-press"
-            style={{
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: showEmojiPicker ? 'var(--accent-apple-blue)' : 'var(--text-muted)',
-              marginBottom: '2px',
-            }}
-          >
-            <Smile size={19} />
-          </button>
+      {/* WhatsApp Official Docked Bottom Composer */}
+      <div className="wa-input-dock">
+        {/* Emoji Button */}
+        <button
+          type="button"
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          className="wa-dock-icon-btn"
+          title="Emojis & Stickers"
+        >
+          <Smile size={24} />
+        </button>
 
-          {/* Attachment Button */}
-          <button
-            type="button"
-            title="Attach file or photo"
-            className="telegram-press"
-            style={{
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--text-muted)',
-              marginBottom: '2px',
-            }}
-            onClick={() => showToast('Impuls File Vault: Drag & drop encrypted media supported.')}
-          >
-            <Paperclip size={19} />
-          </button>
+        {/* Attachment Button */}
+        <button
+          type="button"
+          className="wa-dock-icon-btn"
+          title="Attach files, media, or contacts"
+          onClick={() => showToast('Impuls Vault: Attach encrypted documents & media.')}
+        >
+          <Paperclip size={22} />
+        </button>
 
-          {/* Auto-expanding Input Area */}
+        {/* Input Text Area Container */}
+        <div className="wa-input-field-wrap">
           <textarea
             ref={textareaRef}
-            placeholder={`iMessage...`}
+            placeholder="Type a message"
             value={inputText}
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            style={{
-              flex: 1,
-              backgroundColor: 'transparent',
-              fontSize: '14px',
-              resize: 'none',
-              maxHeight: '120px',
-              padding: '6px 4px',
-              lineHeight: 1.4,
-              color: 'var(--text-primary)',
-            }}
+            className="wa-textarea"
           />
+        </div>
 
-          {/* Dynamic Send / Mic Action Button */}
-          {inputText.trim() ? (
-            <button
-              type="submit"
-              className="telegram-press telegram-check-animate"
-              title="Send message"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--accent-apple-blue)',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '2px',
-              }}
-            >
-              <ArrowUp size={16} strokeWidth={2.6} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="telegram-press"
-              title="Voice Message (Hold to record)"
-              style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-muted)',
-                marginBottom: '2px',
-              }}
-              onClick={() => showToast('Encrypted Voice Note recording ready.')}
-            >
-              <Mic size={18} />
-            </button>
-          )}
-        </form>
+        {/* Dynamic Mic / Send Action Button */}
+        {inputText.trim() ? (
+          <button
+            type="button"
+            onClick={handleSend}
+            className="wa-dock-send-btn"
+            title="Send message"
+          >
+            <Send size={18} strokeWidth={2.4} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="wa-dock-icon-btn"
+            title="Voice Note (Hold to record)"
+            onClick={() => showToast('Voice note encryption channel ready.')}
+          >
+            <Mic size={24} />
+          </button>
+        )}
       </div>
 
       {/* WhatsApp-Style Group Info Drawer */}
@@ -613,11 +570,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
           top: 0,
           right: 0,
           bottom: 0,
-          width: 'min(320px, 100vw)',
+          width: 'min(340px, 100vw)',
           maxWidth: '100%',
           backgroundColor: 'var(--bg-sidebar)',
           borderLeft: '1px solid var(--border-subtle)',
-          boxShadow: 'var(--shadow-lg)',
           zIndex: 50,
           display: 'flex',
           flexDirection: 'column',
@@ -625,43 +581,42 @@ export const ChatView: React.FC<ChatViewProps> = ({
         }}>
           {/* Drawer Header */}
           <div style={{
-            height: '60px',
+            height: '59px',
             borderBottom: '1px solid var(--border-subtle)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '0 18px',
+            backgroundColor: 'var(--bg-chat-header)',
           }}>
-            <span style={{ fontSize: '15px', fontWeight: 600 }}>Group Info</span>
+            <span style={{ fontSize: '16px', fontWeight: 500, color: 'var(--text-primary)' }}>Group Info</span>
             <button
               onClick={() => setShowGroupDrawer(false)}
-              className="telegram-press"
-              style={{ color: 'var(--text-muted)' }}
+              className="wa-dock-icon-btn"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '20px 18px' }}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <div style={{
-                width: '68px',
-                height: '68px',
-                borderRadius: '18px',
-                backgroundColor: chat.avatarColor || 'var(--accent-telegram)',
+                width: '72px',
+                height: '72px',
+                borderRadius: '50%',
+                backgroundColor: chat.avatarColor || 'var(--accent-whatsapp-dark)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '32px',
                 margin: '0 auto 12px',
-                boxShadow: 'var(--shadow-md)',
               }}>
-                {chat.avatar || '💬'}
+                {chat.avatar || '👥'}
               </div>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: 500, color: 'var(--text-primary)' }}>
                 {chat.title}
               </h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 Group • {memberCount} participants
               </p>
             </div>
@@ -672,50 +627,33 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 borderRadius: '8px',
                 backgroundColor: 'var(--bg-card)',
                 border: '1px solid var(--border-subtle)',
-                fontSize: '12.5px',
-                color: 'var(--text-secondary)',
-                marginBottom: '20px',
+                marginBottom: '16px',
               }}>
-                {chat.description}
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                  Description
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                  {chat.description}
+                </div>
               </div>
             )}
 
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px' }}>
-              {memberCount} Participants
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 10px',
-                borderRadius: '8px',
-                backgroundColor: 'var(--bg-card)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--accent-telegram)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                    color: '#fff',
-                  }}>
+            {/* Participants list */}
+            <div>
+              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px' }}>
+                Participants ({memberCount})
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--accent-whatsapp)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600 }}>
                     {currentUser.displayName.charAt(0)}
                   </div>
-                  <div>
-                    <div style={{ fontSize: '13px', fontWeight: 500 }}>{currentUser.displayName} (You)</div>
-                    <div style={{ fontSize: '11px', color: 'var(--status-online)' }}>Online</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>You</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Online</div>
                   </div>
+                  <span style={{ fontSize: '11px', color: 'var(--accent-whatsapp)', backgroundColor: 'rgba(0,168,132,0.15)', padding: '2px 6px', borderRadius: '4px' }}>Admin</span>
                 </div>
-                <span style={{ fontSize: '10.5px', color: 'var(--accent-telegram)', backgroundColor: 'var(--accent-telegram-bg)', padding: '2px 6px', borderRadius: '4px' }}>
-                  Admin
-                </span>
               </div>
             </div>
           </div>
