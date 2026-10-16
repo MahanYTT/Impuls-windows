@@ -1,0 +1,49 @@
+name: Release Windows Desktop
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish Impuls Windows Release
+    runs-on: windows-2022
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Release Notes from CHANGELOG.md
+        id: extract_notes
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          echo "Extracting notes for version ${VERSION}..."
+          awk -v ver="${VERSION}" '
+            $0 ~ "^## \\[" ver "\\]" { flag=1; next }
+            flag && /^## / { exit }
+            flag { print }
+          ' CHANGELOG.md > release_notes.txt
+
+          if [ ! -s release_notes.txt ]; then
+            echo "Release ${VERSION} of Impuls Windows Desktop" > release_notes.txt
+          fi
+
+      - name: Package Source & Assets Bundle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path "dist" -Force
+          Compress-Archive -Path "Telegram\Resources\art\icon256.ico", "Telegram\Resources\art\icon256.png", "Telegram\build\version", "CHANGELOG.md" -DestinationPath "dist\Impuls-Desktop-v1.0.0-Assets.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Impuls Windows Desktop ${{ github.ref_name }}
+          body_path: release_notes.txt
+          files: dist/*.zip
+          draft: false
+          prerelease: false
