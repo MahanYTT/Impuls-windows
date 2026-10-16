@@ -7,6 +7,8 @@ import { ChatList } from './components/ChatList';
 import { ChatView } from './components/ChatView';
 import { SettingsModal } from './components/SettingsModal';
 
+import { api } from './services/api';
+
 export const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentTab, setCurrentTab] = useState<TabType>('dm');
@@ -23,16 +25,34 @@ export const App: React.FC = () => {
     const loadedChats = storage.getChats();
     setChats(loadedChats);
     if (loadedChats.length > 0) {
-      setActiveChatId(loadedChats[0].id);
-      setMessages(storage.getMessages(loadedChats[0].id));
+      const firstId = loadedChats[0].id;
+      setActiveChatId(firstId);
+      setMessages(storage.getMessages(firstId));
+
+      // Fetch live messages from server
+      api.fetchMessages(firstId).then(remote => {
+        if (remote && remote.length > 0) {
+          setMessages(remote);
+          storage.saveMessages(firstId, remote);
+        }
+      });
     }
+
+    // Subscribe to live SSE events from server
+    const unsubscribe = api.subscribeToStream((incomingMsg) => {
+      setMessages(prev => {
+        if (prev.some(m => m.id === incomingMsg.id)) return prev;
+        return [...prev, incomingMsg];
+      });
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleAuthSuccess = (user: User) => {
     storage.setUser(user);
     setCurrentUser(user);
 
-    // Load or initialize chats
     const loadedChats = storage.getChats();
     setChats(loadedChats);
     if (loadedChats.length > 0) {
@@ -48,15 +68,22 @@ export const App: React.FC = () => {
     setMessages([]);
   };
 
-  const handleSelectChat = (chatId: string) => {
+  const handleSelectChat = async (chatId: string) => {
     setActiveChatId(chatId);
     setMessages(storage.getMessages(chatId));
 
     // Clear unread count on selection
     setChats(prev => prev.map(c => c.id === chatId ? { ...c, unreadCount: 0 } : c));
+
+    // Sync with remote server
+    const remote = await api.fetchMessages(chatId);
+    if (remote && remote.length > 0) {
+      setMessages(remote);
+      storage.saveMessages(chatId, remote);
+    }
   };
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!activeChatId || !currentUser) return;
 
     const newMessage: Message = {
@@ -70,9 +97,18 @@ export const App: React.FC = () => {
       isRead: true,
     };
 
+    // Update local state immediately
     const updated = storage.addMessage(activeChatId, newMessage);
     setMessages(updated);
     setChats(storage.getChats());
+
+    // Push to server MongoDB database
+    api.sendMessage({
+      chatId: activeChatId,
+      senderId: currentUser.id,
+      senderName: currentUser.displayName,
+      text,
+    });
 
     // If talking to Impuls System, simulate automatic operational reply
     if (activeChatId === 'chat_system') {

@@ -3,6 +3,17 @@
 All notable changes to the Impuls Windows Desktop application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.5] - 2026-10-16
+
+### 🚀 Added & Enhanced
+- **Live Server Integration**:
+  - Connected `AuthCard` directly to `POST http://80.201.130.248:8088/api/client/auth` for live account creation and verification in MongoDB.
+  - Connected `App.tsx` to `GET/POST http://80.201.130.248:8088/api/client/messages` for real-time persistent messaging.
+  - Implemented Server-Sent Events (SSE) live stream subscriber (`/api/client/stream`) for instant cross-device message synchronization.
+  - Graceful fallback for offline mode and local encrypted session preservation.
+
+---
+
 ## [v1.0.4] - 2026-10-16
 
 ### 🚀 Added & Rebuilt

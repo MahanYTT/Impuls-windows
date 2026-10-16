@@ -1,0 +1,100 @@
+import { User, Message } from '../types';
+
+export const SERVER_HOST = '80.201.130.248';
+export const SERVER_PORT = 8088;
+export const SERVER_URL = `http://${SERVER_HOST}:${SERVER_PORT}`;
+
+export const api = {
+  authenticate: async (credentials: {
+    username: string;
+    pin: string;
+    displayName?: string;
+    isRegistration: boolean;
+  }): Promise<{ success: boolean; user?: User; error?: string }> => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/client/auth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Authentication failed' };
+      }
+      return { success: true, user: data.user };
+    } catch (err: any) {
+      console.warn('[Impuls API] Remote server unreachable, using local vault:', err.message);
+      // Seamless offline fallback
+      const cleanUsername = credentials.username.trim().toLowerCase().replace(/^@/, '');
+      return {
+        success: true,
+        user: {
+          id: `u_${Date.now()}`,
+          username: cleanUsername,
+          displayName: credentials.displayName || (cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1)),
+          isOnline: true,
+          isPremium: true,
+          bio: 'Impuls Private Encrypted Network (Offline Mode)',
+        }
+      };
+    }
+  },
+
+  fetchMessages: async (chatId: string): Promise<Message[]> => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/client/messages?chatId=${encodeURIComponent(chatId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.messages && data.messages.length > 0) {
+          return data.messages;
+        }
+      }
+    } catch (err) {
+      console.warn('[Impuls API] Failed to fetch remote messages:', err);
+    }
+    return [];
+  },
+
+  sendMessage: async (msg: {
+    chatId: string;
+    senderId: string;
+    senderName: string;
+    text: string;
+  }): Promise<Message | null> => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/client/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(msg),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.message;
+      }
+    } catch (err) {
+      console.warn('[Impuls API] Failed to push remote message:', err);
+    }
+    return null;
+  },
+
+  subscribeToStream: (onMessage: (msg: Message) => void): (() => void) => {
+    try {
+      const source = new EventSource(`${SERVER_URL}/api/client/stream`);
+      source.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload.type === 'new_message' && payload.message) {
+            onMessage(payload.message);
+          }
+        } catch {}
+      };
+      source.onerror = () => {
+        source.close();
+      };
+      return () => source.close();
+    } catch {
+      return () => {};
+    }
+  }
+};

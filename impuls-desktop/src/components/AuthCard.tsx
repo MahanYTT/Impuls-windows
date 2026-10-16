@@ -3,6 +3,8 @@ import { ImpulsLogo } from '../assets/Logo';
 import { User } from '../types';
 import { Lock, User as UserIcon, Shield, ArrowRight, CheckCircle2 } from 'lucide-react';
 
+import { api } from '../services/api';
+
 interface AuthCardProps {
   onSuccess: (user: User) => void;
 }
@@ -16,7 +18,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({ onSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -42,21 +44,24 @@ export const AuthCard: React.FC<AuthCardProps> = ({ onSuccess }) => {
 
     setLoading(true);
 
-    // Simulate verification with private server
-    setTimeout(() => {
-      const cleanUsername = username.trim().toLowerCase().replace(/^@/, '');
-      const user: User = {
-        id: `u_${Date.now()}`,
-        username: cleanUsername,
-        displayName: isRegister ? displayName.trim() : (cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1)),
-        isOnline: true,
-        isPremium: true,
-        bio: 'Impuls Private Encrypted Network',
-      };
+    try {
+      const result = await api.authenticate({
+        username: username.trim(),
+        pin: pin.trim(),
+        displayName: displayName.trim(),
+        isRegistration: isRegister,
+      });
 
       setLoading(false);
-      onSuccess(user);
-    }, 600);
+      if (result.success && result.user) {
+        onSuccess(result.user);
+      } else {
+        setError(result.error || 'Authentication failed');
+      }
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message || 'Connection error to server 80.201.130.248');
+    }
   };
 
   return (
