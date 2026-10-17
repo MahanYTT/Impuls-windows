@@ -3,7 +3,27 @@
 All notable changes to the Impuls Windows Desktop application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.0.6] - 2026-10-16
+## [v1.1.1] - 2026-10-17
+
+### 🚀 Reverted to Authentic Telegram Desktop & Fixed Executable Release
+- **Pure Telegram Desktop Experience**:
+  - Reverted experimental custom web/Electron interface and restored 100% native Telegram Desktop (`tdesktop`) architecture and UI.
+  - Native window rendering, hardware-accelerated chat canvas, rich media playback, and instant MTProto 2.0 communication.
+- **Impuls Minimalist Branding**:
+  - Application named **Impuls** (`AppName = "Impuls"`, `AppFile = "Impuls"`).
+  - High-quality minimalist kinetic pulse icon embedded in application resources across all Windows resolutions (16x16 to 512x512 and native `.ico`).
+- **Private MTProto 2.0 Integration**:
+  - Preconfigured native DC discovery endpoints in `mtproto_dc_options.cpp` pointing directly to Impuls Server (`80.201.130.248:20443`).
+- **Fixed Automated Release Pipeline**:
+  - Fixed Windows CI/CD action (`build-windows.yml`) compiler path syntax for `tools\ChangeIcon.cs`.
+  - Builds and publishes the official standalone executable (`Impuls.exe`) and portable distribution archive (`Impuls-v1.1.1-Windows-x64.zip`) directly to GitHub Releases.
+
+### ⚙️ Version Metadata
+- Version: `1.1.1`
+- Internal Version Code: `1001001`
+- Platform: Windows 10/11 (x64)
+
+---
 
 ### 🚀 Added & Enhanced
 - **Custom Telegram Window Border & TitleBar**:

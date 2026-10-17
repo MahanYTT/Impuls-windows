@@ -45,10 +45,10 @@ jobs:
           node tools/patch_impuls_binary.js Telegram/Telegram.exe Telegram/Impuls.exe
           
           Write-Host "Compiling icon changer..."
-          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:ChangeIcon.exe tools/ChangeIcon.cs
+          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:ChangeIcon.exe tools\ChangeIcon.cs
           
           Write-Host "Injecting Impuls kinetic icon into executable resources..."
-          .\ChangeIcon.exe Telegram/Impuls.exe Telegram/Resources/art/icon256.ico
+          .\ChangeIcon.exe Telegram\Impuls.exe Telegram\Resources\art\icon256.ico
           
           Write-Host "Cleaning up unpatched binaries..."
           Remove-Item Telegram/Telegram.exe -Force
