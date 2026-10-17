@@ -22,6 +22,14 @@ ipch/
 .vscode/
 .cache/
 compile_commands.json
+dist/
+*.zip
+*.exe
+Telegram/Telegram.exe
+Telegram/Impuls.exe
+Telegram/modules/
+Telegram/README.txt
+
 
 /Telegram/log.txt
 /Telegram/data
